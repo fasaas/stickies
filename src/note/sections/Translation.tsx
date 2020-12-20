@@ -16,7 +16,13 @@ export const Translation = ({ props, id }: ISection) => {
                     }}
                 />
                 <Text>A castellano</Text>
-                <TextInput placeholder='Por ejemplo ...' />
+                <TextInput
+                    placeholder='Por ejemplo ...'
+                    value={props.to}
+                    onChangeText={(text) => {
+                        dispatch({ type: 'prop-update', event: { id, path: 'to', value: text } })
+                    }}
+                />
             </View>
         </View>
     )

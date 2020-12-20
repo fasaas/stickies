@@ -9,7 +9,7 @@ export type ISection = {
 
 type State = { sections: ISection[] }
 type Action = {
-    type: 'prop-update'
+    type: 'prop-update' | 'remove-section'
     event: any
 }
 type Dispatch = (action: Action) => void
@@ -30,6 +30,12 @@ const noteReducer = (state: State, action: Action) => {
             if (section) {
                 section.props[path] = value
             }
+            return { ...state }
+        }
+        case 'remove-section': {
+            const { id } = event
+            state.sections.filter((section) => section.id !== id)
+
             return { ...state }
         }
         default: {

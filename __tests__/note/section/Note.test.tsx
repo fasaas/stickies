@@ -6,32 +6,32 @@ import Note from '../../../src/note/Note'
 describe('Given new Note', () => {
     afterEach(cleanup)
 
-    test('Then render a title block', () => {
+    test('Render a title block', () => {
         const { queryAllByPlaceholderText, queryByA11yRole } = render(<Note />)
 
         expect(queryAllByPlaceholderText('Note title')).toHaveLength(1)
         expect(queryByA11yRole('header')).not.toBeNull()
     })
 
-    test('Then render an add section button', () => {
+    test('Render an add section button', () => {
         const { queryByTestId } = render(<Note />)
 
         expect(queryByTestId('add-section')).not.toBeNull()
     })
 
-    test('Then render a disabled save button', () => {
+    test('Render a disabled save button', () => {
         const { queryByA11yLabel } = render(<Note />)
 
         expect(queryByA11yLabel('Save note')).toBeDisabled()
     })
 
-    test('Then render a disabled cancel button', () => {
+    test('Render a disabled cancel button', () => {
         const { queryByA11yLabel } = render(<Note />)
 
         expect(queryByA11yLabel('Cancel')).toBeDisabled()
     })
 
-    test('Then render a first section for translatable section', () => {
+    test('Render a first section for translatable section', () => {
         const { queryByA11yRole, queryByText, queryByPlaceholderText, queryByTestId } = render(<Note />)
 
         expect(queryByA11yRole('sectionList')).not.toBeNull()
@@ -43,14 +43,14 @@ describe('Given new Note', () => {
     })
 
     describe('When rendering a section', () => {
-        test('Then render a remove icon', async () => {
+        test('Render a remove icon', async () => {
             const { queryAllByTestId } = render(<Note />)
 
             await waitFor(() => expect(queryAllByTestId('remove-section')).toHaveLength(1))
         })
 
         describe('When clicking on the remove icon', () => {
-            test('Then render an Undo box', async () => {
+            test('Render an Undo box', async () => {
                 const { queryAllByTestId } = render(<Note />)
 
                 await waitFor(() => expect(queryAllByTestId('remove-section')).toHaveLength(1))
@@ -77,6 +77,23 @@ describe('Given new Note', () => {
                     fireEvent.press(queryByTestId('undo-button'))
 
                     await waitFor(() => expect(queryByDisplayValue('Море')).toBeTruthy())
+                })
+            })
+
+            describe('When clicking on the remove section box clear icon', () => {
+                test('Completely remove the section', async () => {
+                    const { queryByPlaceholderText, queryByTestId, queryByDisplayValue } = render(<Note />)
+                    fireEvent.changeText(queryByPlaceholderText('Por ejemplo ...'), 'Mar')
+
+                    await waitFor(() => expect(queryByDisplayValue('Mar')).toBeTruthy())
+
+                    fireEvent.press(queryByTestId('remove-section'))
+
+                    await waitFor(() => expect(queryByTestId('undo-button')).toBeTruthy())
+
+                    fireEvent.press(queryByTestId('remove-box'))
+
+                    await waitFor(() => expect(queryByPlaceholderText('Por ejemplo ...')).toBeNull())
                 })
             })
         })
