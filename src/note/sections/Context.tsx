@@ -1,25 +1,47 @@
 import React, { createContext, ReactNode, useContext, useReducer } from 'react'
 
-type ISection = {
+export type ISection = {
     type: String
+    name: String
     id: String
     props: any
 }
 
-type State = ISection[]
-type Action = { type: '' }
+type State = { sections: ISection[] }
+type Action = {
+    type: 'prop-update'
+    event: any
+}
 type Dispatch = (action: Action) => void
 
 const init = (initialValue?: ISection[]) => {
-    const defaultValue: ISection[] = [{ type: '@native/translation', id: '1', props: { from: '', to: '' } }]
-    return !!initialValue ? initialValue : defaultValue
+    const defaultValue: ISection[] = [
+        { type: '@native/translation', name: 'Translation', id: '1', props: { from: 'From text', to: '' } },
+    ]
+    return !!initialValue ? { sections: initialValue } : { sections: defaultValue }
 }
-const noteReducer = (state: State, action: Action) => {}
+const noteReducer = (state: State, action: Action) => {
+    const { type, event } = action
+
+    switch (type) {
+        case 'prop-update': {
+            const { id, path, value } = event
+            const section: ISection | undefined = state.sections.find((section) => section.id === id)
+            if (section) {
+                section.props[path] = value
+            }
+            return { ...state }
+        }
+        default: {
+            throw new Error(`Type ${type} unsupported`)
+        }
+    }
+}
 
 const SectionsContext = createContext<State | undefined>(undefined)
 const SectionsDispatchContext = createContext<Dispatch | undefined>(undefined)
 
-const SectionsProvider = ({ value, children }: { value: ISection[]; children: ReactNode }) => {
+const SectionsProvider = ({ value, children }: { value?: ISection[]; children: ReactNode }) => {
     const [state, dispatch] = useReducer(noteReducer, value, init)
 
     return (
