@@ -82,7 +82,9 @@ describe('Given new Note', () => {
 
             describe('When clicking on the remove section box clear icon', () => {
                 test('Completely remove the section', async () => {
-                    const { queryByPlaceholderText, queryByTestId, queryByDisplayValue } = render(<Note />)
+                    const { queryByPlaceholderText, queryByTestId, queryByDisplayValue, queryAllByTestId } = render(
+                        <Note />
+                    )
                     fireEvent.changeText(queryByPlaceholderText('Por ejemplo ...'), 'Mar')
 
                     await waitFor(() => expect(queryByDisplayValue('Mar')).toBeTruthy())
@@ -93,7 +95,10 @@ describe('Given new Note', () => {
 
                     fireEvent.press(queryByTestId('remove-box'))
 
-                    await waitFor(() => expect(queryByPlaceholderText('Por ejemplo ...')).toBeNull())
+                    await waitFor(() => {
+                        expect(queryByPlaceholderText('Por ejemplo ...')).toBeNull()
+                        expect(queryAllByTestId('section')).toHaveLength(0)
+                    })
                 })
             })
         })

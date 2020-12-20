@@ -34,7 +34,7 @@ const noteReducer = (state: State, action: Action) => {
         }
         case 'remove-section': {
             const { id } = event
-            state.sections.filter((section) => section.id !== id)
+            state.sections = state.sections.filter((section) => section.id !== id)
 
             return { ...state }
         }
@@ -44,7 +44,7 @@ const noteReducer = (state: State, action: Action) => {
                 type: '@native/translation',
                 name: 'Translation',
                 id: '2',
-                props: { from: 'From text', to: '' },
+                props: { from: '', to: '' },
             })
 
             return { ...state }
