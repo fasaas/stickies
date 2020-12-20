@@ -1,7 +1,7 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import Note from '../src/Note'
+import Note from '../../../src/note/Note'
 
 describe('Given new Note', () => {
     test('Then render a title block', () => {
@@ -9,6 +9,12 @@ describe('Given new Note', () => {
 
         expect(queryAllByPlaceholderText('Note title')).toHaveLength(1)
         expect(queryByA11yRole('header')).not.toBeNull()
+    })
+
+    test('Then render an add section button', () => {
+        const { queryByTestId } = render(<Note />)
+
+        expect(queryByTestId('add-section')).not.toBeNull()
     })
 
     test('Then render a disabled save button', () => {
@@ -23,13 +29,8 @@ describe('Given new Note', () => {
         expect(queryByA11yLabel('Cancel')).toBeDisabled()
     })
 
-    test('Then render a first section for translatable content', () => {
-        const {
-            queryByA11yRole,
-            queryByText,
-            queryByPlaceholderText,
-            queryByTestId,
-        } = render(<Note />)
+    test('Then render a first section for translatable section', () => {
+        const { queryByA11yRole, queryByText, queryByPlaceholderText, queryByTestId } = render(<Note />)
 
         expect(queryByA11yRole('sectionList')).not.toBeNull()
         expect(queryByTestId('@native/translation')).not.toBeNull()
