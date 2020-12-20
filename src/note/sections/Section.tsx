@@ -9,7 +9,7 @@ export default ({ section }: { section: ISection }) => {
     const [canShow, show] = useState(true)
     const dispatch = useDispatch()
     return (
-        <View key='section'>
+        <View key='section' testID='section'>
             {canShow ? (
                 <Fragment>
                     <Text>{name}</Text>

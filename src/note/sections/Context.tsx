@@ -9,14 +9,14 @@ export type ISection = {
 
 type State = { sections: ISection[] }
 type Action = {
-    type: 'prop-update' | 'remove-section'
+    type: 'prop-update' | 'remove-section' | 'add-section'
     event: any
 }
 type Dispatch = (action: Action) => void
 
 const init = (initialValue?: ISection[]) => {
     const defaultValue: ISection[] = [
-        { type: '@native/translation', name: 'Translation', id: '1', props: { from: 'From text', to: '' } },
+        { type: '@native/translation', name: 'Translation', id: '1', props: { from: '', to: '' } },
     ]
     return !!initialValue ? { sections: initialValue } : { sections: defaultValue }
 }
@@ -35,6 +35,17 @@ const noteReducer = (state: State, action: Action) => {
         case 'remove-section': {
             const { id } = event
             state.sections.filter((section) => section.id !== id)
+
+            return { ...state }
+        }
+        case 'add-section': {
+            const { type } = event
+            state.sections.push({
+                type: '@native/translation',
+                name: 'Translation',
+                id: '2',
+                props: { from: 'From text', to: '' },
+            })
 
             return { ...state }
         }

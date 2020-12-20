@@ -98,4 +98,14 @@ describe('Given new Note', () => {
             })
         })
     })
+
+    describe('When adding a new section', () => {
+        test('Render the new section below existing ones', async () => {
+            const { queryByTestId, queryAllByTestId } = render(<Note />)
+
+            fireEvent.press(queryByTestId('add-section-button'))
+
+            await waitFor(() => expect(queryAllByTestId('section')).toHaveLength(2))
+        })
+    })
 })
