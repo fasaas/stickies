@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
-import { Button, TextInput, View } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
-import { ISection, useDispatch, useSections } from './Context'
+import React from 'react'
+import { TextInput, View } from 'react-native'
+import { FormControl } from '../FormControl'
+import { Picker } from '../Picker'
+import { ISection, useSections } from './Context'
 import Section from './Section'
 
 export default () => {
-    const { sections, isChanged } = useSections()
-    const dispatch = useDispatch()
-    const [selectedSection, setSection] = useState('@native/translation')
+    const { sections } = useSections()
     return (
         <View key='note-view'>
             <View>
@@ -19,38 +18,8 @@ export default () => {
                     return <Section key={`${type}-${id}-${index}`} section={section} />
                 })}
             </View>
-            <View key='add-sections' accessibilityRole='addSections'>
-                <Picker
-                    testID='add-section'
-                    selectedValue={selectedSection}
-                    onValueChange={(value) => setSection(value.toString())}
-                >
-                    <Picker.Item testID='add-section-option' label='Translation' value='@native/translation' />
-                </Picker>
-                <Button
-                    testID='add-section-button'
-                    title='Add section'
-                    onPress={() => {
-                        dispatch({ type: 'add-section', event: { type: selectedSection } })
-                    }}
-                />
-            </View>
-            <View key='submit-view'>
-                <Button
-                    testID='save-note'
-                    title='Save'
-                    accessibilityLabel='Save note'
-                    disabled={!isChanged}
-                    onPress={() => dispatch({ type: 'save' })}
-                />
-                <Button
-                    testID='cancel-note'
-                    title='Cancel'
-                    accessibilityLabel='Cancel'
-                    disabled={!isChanged}
-                    onPress={() => dispatch({ type: 'cancel' })}
-                />
-            </View>
+            <Picker />
+            <FormControl />
         </View>
     )
 }

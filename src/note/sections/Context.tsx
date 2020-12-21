@@ -16,7 +16,7 @@ type Dispatch = (action: Action) => void
 
 const init = (initialValue?: ISection[]): State => {
     const defaultValue: ISection[] = [
-        { type: '@native/translation', name: 'Translation', id: '1', props: { from: '', to: '' } },
+        { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]
     return !!initialValue
         ? { sections: initialValue, initial: JSON.stringify(initialValue), isChanged: false }
@@ -52,7 +52,7 @@ const noteReducer = (state: State, action: Action): State => {
             sections.push({
                 type: '@native/translation',
                 name: 'Translation',
-                id: '2',
+                id: Date.now().toString(),
                 props: { from: '', to: '' },
             })
 

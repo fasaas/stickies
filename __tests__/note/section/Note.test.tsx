@@ -211,7 +211,7 @@ describe('Given existing note with two sections', () => {
         })
     })
 
-    describe('When removing a  section', () => {
+    describe('When removing a section', () => {
         test('Enable both save and cancel buttons', async () => {
             const sections: ISection[] = [
                 mockTranslationSection({ id: '1', from: 'Один' }),
@@ -232,6 +232,35 @@ describe('Given existing note with two sections', () => {
 
             expect(queryByTestId('save-note')).toBeEnabled()
             expect(queryByTestId('cancel-note')).toBeEnabled()
+        })
+
+        test('Ensure sections contain unique ID when deleting', async () => {
+            const sections: ISection[] = [mockTranslationSection({ id: '1' })]
+            const { queryByTestId, queryAllByTestId, debug } = render(<Note sections={sections} />)
+
+            await waitFor(() => {
+                expect(queryByTestId('save-note')).toBeDisabled()
+                expect(queryByTestId('cancel-note')).toBeDisabled()
+            })
+
+            fireEvent.press(queryByTestId('add-section-button'))
+
+            await waitFor(() => expect(queryAllByTestId('section')).toHaveLength(2))
+
+            fireEvent.press(queryByTestId('add-section-button'))
+
+            await waitFor(() => {
+                expect(queryAllByTestId('section')).toHaveLength(3)
+                expect(queryAllByTestId('remove-section')).toHaveLength(3)
+            })
+
+            fireEvent.press(queryAllByTestId('remove-section')[1])
+
+            await waitFor(() => expect(queryByTestId('remove-box')).toBeTruthy())
+
+            fireEvent.press(queryByTestId('remove-box'))
+
+            await waitFor(() => expect(queryAllByTestId('section')).toHaveLength(2))
         })
     })
 })
@@ -295,5 +324,3 @@ const mockTranslationSection = ({ id, from = '', to = '' }: { id: string; from?:
         props: { from, to },
     }
 }
-
-// Test save action!!
