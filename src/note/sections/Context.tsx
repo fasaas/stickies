@@ -7,7 +7,7 @@ export type ISection = {
     props: any
 }
 
-type State = { sections: ISection[]; initial: string; isChanged: Boolean }
+type State = { sections: ISection[]; initial: { sections: string }; isChanged: boolean }
 type Action = {
     type: 'prop-update' | 'remove-section' | 'add-section' | 'cancel' | 'save'
     event?: any
@@ -19,8 +19,8 @@ const init = (initialValue?: ISection[]): State => {
         { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]
     return !!initialValue
-        ? { sections: initialValue, initial: JSON.stringify(initialValue), isChanged: false }
-        : { sections: defaultValue, initial: JSON.stringify(defaultValue), isChanged: false }
+        ? { sections: initialValue, initial: { sections: JSON.stringify(initialValue) }, isChanged: false }
+        : { sections: defaultValue, initial: { sections: JSON.stringify(defaultValue) }, isChanged: false }
 }
 const noteReducer = (state: State, action: Action): State => {
     const { type, event } = action
@@ -34,7 +34,7 @@ const noteReducer = (state: State, action: Action): State => {
                 section.props[path] = value
             }
 
-            const isChanged = JSON.stringify(sections) !== initial
+            const isChanged = JSON.stringify(sections) !== initial.sections
 
             return { sections, initial, isChanged }
         }
@@ -61,11 +61,11 @@ const noteReducer = (state: State, action: Action): State => {
 
         case 'cancel': {
             const { initial } = state
-            return { sections: JSON.parse(initial), initial, isChanged: false }
+            return { sections: JSON.parse(initial.sections), initial, isChanged: false }
         }
         case 'save': {
             const { sections } = state
-            return { sections, initial: JSON.stringify(sections), isChanged: false }
+            return { sections, initial: { sections: JSON.stringify(sections) }, isChanged: false }
         }
         default: {
             throw new Error(`Type ${type} unsupported`)
