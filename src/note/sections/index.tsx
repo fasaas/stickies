@@ -5,7 +5,7 @@ import { ISection, useDispatch, useSections } from './Context'
 import Section from './Section'
 
 export default () => {
-    const { sections } = useSections()
+    const { sections, isChanged } = useSections()
     const dispatch = useDispatch()
     const [selectedSection, setSection] = useState('@native/translation')
     return (
@@ -36,8 +36,8 @@ export default () => {
                 />
             </View>
             <View key='submit-view'>
-                <Button title='Save' accessibilityLabel='Save note' disabled />
-                <Button title='Cancel' accessibilityLabel='Cancel' disabled />
+                <Button testID='save-note' title='Save' accessibilityLabel='Save note' disabled={!isChanged} />
+                <Button testID='cancel-note' title='Cancel' accessibilityLabel='Cancel' disabled={!isChanged} />
             </View>
         </View>
     )

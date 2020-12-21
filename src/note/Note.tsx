@@ -1,10 +1,10 @@
 import React from 'react'
-import { SectionsProvider } from './sections/Context'
+import { ISection, SectionsProvider } from './sections/Context'
 import Sections from './sections'
 
-export default () => {
+export default ({ sections }: { sections?: ISection[] }) => {
     return (
-        <SectionsProvider>
+        <SectionsProvider value={sections}>
             <Sections />
         </SectionsProvider>
     )

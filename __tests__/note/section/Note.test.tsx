@@ -2,6 +2,7 @@ import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react-native'
 import Note from '../../../src/note/Note'
+import { ISection } from '../../../src/note/sections/Context'
 
 describe('Given new Note', () => {
     afterEach(cleanup)
@@ -114,3 +115,96 @@ describe('Given new Note', () => {
         })
     })
 })
+
+describe('Given existing note with two sections', () => {
+    afterEach(cleanup)
+
+    test('Render both sections', async () => {
+        const sections: ISection[] = [mockTranslationSection({ id: '1' }), mockTranslationSection({ id: '2' })]
+        const { queryAllByTestId } = render(<Note sections={sections} />)
+
+        await waitFor(() => expect(queryAllByTestId('section')).toHaveLength(2))
+    })
+
+    test('Render disabled save button', async () => {
+        const sections: ISection[] = [mockTranslationSection({ id: '1' }), mockTranslationSection({ id: '2' })]
+        const { queryByTestId } = render(<Note sections={sections} />)
+
+        await waitFor(() => expect(queryByTestId('save-note')).toBeDisabled())
+    })
+
+    test('Render disabled cancel button', async () => {
+        const sections: ISection[] = [mockTranslationSection({ id: '1' }), mockTranslationSection({ id: '2' })]
+        const { queryByTestId } = render(<Note sections={sections} />)
+
+        await waitFor(() => expect(queryByTestId('cancel-note')).toBeDisabled())
+    })
+
+    describe('When updating sections, given new content is different from initial sections', () => {
+        test('Enable both save and cancel buttons', async () => {
+            const sections: ISection[] = [mockTranslationSection({ id: '1' }), mockTranslationSection({ id: '2' })]
+            const { queryByTestId, queryAllByPlaceholderText, queryByDisplayValue } = render(
+                <Note sections={sections} />
+            )
+
+            await waitFor(() => expect(queryByTestId('cancel-note')).toBeDisabled())
+
+            fireEvent.changeText(queryAllByPlaceholderText('Например ...')[0], 'Море')
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Море')).toBeTruthy()
+                expect(queryByTestId('save-note')).toBeEnabled()
+                expect(queryByTestId('cancel-note')).toBeEnabled()
+            })
+        })
+    })
+
+    describe('When updating sections, given new content is same as initial sections', () => {
+        test('Disable both save and cancel buttons', async () => {
+            const sections: ISection[] = [
+                mockTranslationSection({ id: '1', from: 'Один' }),
+                mockTranslationSection({ id: '2' }),
+            ]
+            const { queryByTestId, queryAllByPlaceholderText, queryByDisplayValue } = render(
+                <Note sections={sections} />
+            )
+
+            await waitFor(() => expect(queryByTestId('cancel-note')).toBeDisabled())
+
+            fireEvent.changeText(queryAllByPlaceholderText('Например ...')[0], 'Море')
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Море')).toBeTruthy()
+                expect(queryByTestId('save-note')).toBeEnabled()
+                expect(queryByTestId('cancel-note')).toBeEnabled()
+            })
+
+            fireEvent.changeText(queryAllByPlaceholderText('Например ...')[0], 'Один')
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Один')).toBeTruthy()
+                expect(queryByTestId('save-note')).toBeDisabled()
+                expect(queryByTestId('cancel-note')).toBeDisabled()
+            })
+        })
+    })
+
+    describe('When adding a new section', () => )
+})
+
+const mockTranslationSection = ({ id, from = '', to = '' }: { id: String; from?: String; to?: String }): ISection => {
+    return {
+        type: '@native/translation',
+        id,
+        name: 'Translation',
+        props: { from, to },
+    }
+}
+//Test given existing note, when to save and when to cancel
+/*
+ * When state is != initial state :check:
+ * When adding new section @TODO
+ * When removing section @TODO
+*/
+
+// Test save and cancel actions!!

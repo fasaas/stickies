@@ -7,18 +7,20 @@ export type ISection = {
     props: any
 }
 
-type State = { sections: ISection[] }
+type State = { sections: ISection[]; initial: String; isChanged: Boolean }
 type Action = {
     type: 'prop-update' | 'remove-section' | 'add-section'
     event: any
 }
 type Dispatch = (action: Action) => void
 
-const init = (initialValue?: ISection[]) => {
+const init = (initialValue?: ISection[]): State => {
     const defaultValue: ISection[] = [
         { type: '@native/translation', name: 'Translation', id: '1', props: { from: '', to: '' } },
     ]
-    return !!initialValue ? { sections: initialValue } : { sections: defaultValue }
+    return !!initialValue
+        ? { sections: initialValue, initial: JSON.stringify(initialValue), isChanged: false }
+        : { sections: defaultValue, initial: JSON.stringify(defaultValue), isChanged: false }
 }
 const noteReducer = (state: State, action: Action) => {
     const { type, event } = action
@@ -26,11 +28,15 @@ const noteReducer = (state: State, action: Action) => {
     switch (type) {
         case 'prop-update': {
             const { id, path, value } = event
-            const section: ISection | undefined = state.sections.find((section) => section.id === id)
+            const { initial, sections } = state
+            const section: ISection | undefined = sections.find((section) => section.id === id)
             if (section) {
                 section.props[path] = value
             }
-            return { ...state }
+
+            const isChanged = JSON.stringify(sections) !== initial
+
+            return { sections, initial, isChanged }
         }
         case 'remove-section': {
             const { id } = event
