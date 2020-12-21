@@ -1,16 +1,16 @@
 import React, { createContext, ReactNode, useContext, useReducer } from 'react'
 
 export type ISection = {
-    type: String
-    name: String
-    id: String
+    type: string
+    name: string
+    id: string
     props: any
 }
 
-type State = { sections: ISection[]; initial: String; isChanged: Boolean }
+type State = { sections: ISection[]; initial: string; isChanged: Boolean }
 type Action = {
-    type: 'prop-update' | 'remove-section' | 'add-section'
-    event: any
+    type: 'prop-update' | 'remove-section' | 'add-section' | 'cancel'
+    event?: any
 }
 type Dispatch = (action: Action) => void
 
@@ -22,7 +22,7 @@ const init = (initialValue?: ISection[]): State => {
         ? { sections: initialValue, initial: JSON.stringify(initialValue), isChanged: false }
         : { sections: defaultValue, initial: JSON.stringify(defaultValue), isChanged: false }
 }
-const noteReducer = (state: State, action: Action) => {
+const noteReducer = (state: State, action: Action): State => {
     const { type, event } = action
 
     switch (type) {
@@ -39,22 +39,29 @@ const noteReducer = (state: State, action: Action) => {
             return { sections, initial, isChanged }
         }
         case 'remove-section': {
-            const { id } = event
-            state.sections = state.sections.filter((section) => section.id !== id)
+            const { sections, initial } = state
 
-            return { ...state }
+            const { id } = event
+            const filteredSections = sections.filter((section) => section.id !== id)
+
+            return { sections: filteredSections, initial, isChanged: true }
         }
         case 'add-section': {
+            const { sections, initial } = state
             const { type } = event
-            state.sections.push({
+            sections.push({
                 type: '@native/translation',
                 name: 'Translation',
                 id: '2',
                 props: { from: '', to: '' },
             })
 
-            return { ...state }
+            return { sections, initial, isChanged: true }
         }
+
+        case 'cancel':
+            const { initial } = state
+            return { sections: JSON.parse(initial), initial, isChanged: false }
         default: {
             throw new Error(`Type ${type} unsupported`)
         }

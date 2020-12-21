@@ -37,7 +37,13 @@ export default () => {
             </View>
             <View key='submit-view'>
                 <Button testID='save-note' title='Save' accessibilityLabel='Save note' disabled={!isChanged} />
-                <Button testID='cancel-note' title='Cancel' accessibilityLabel='Cancel' disabled={!isChanged} />
+                <Button
+                    testID='cancel-note'
+                    title='Cancel'
+                    accessibilityLabel='Cancel'
+                    disabled={!isChanged}
+                    onPress={() => dispatch({ type: 'cancel' })}
+                />
             </View>
         </View>
     )

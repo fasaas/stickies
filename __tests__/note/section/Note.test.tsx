@@ -189,10 +189,80 @@ describe('Given existing note with two sections', () => {
         })
     })
 
-    describe('When adding a new section', () => )
+    describe('When adding a new section', () => {
+        test('Enable both save and cancel buttons', async () => {
+            const sections: ISection[] = [
+                mockTranslationSection({ id: '1', from: 'Один' }),
+                mockTranslationSection({ id: '2' }),
+            ]
+            const { queryByTestId } = render(<Note sections={sections} />)
+
+            await waitFor(() => {
+                expect(queryByTestId('save-note')).toBeDisabled()
+                expect(queryByTestId('cancel-note')).toBeDisabled()
+            })
+
+            fireEvent.press(queryByTestId('add-section-button'))
+
+            await waitFor(() => {
+                expect(queryByTestId('save-note')).toBeEnabled()
+                expect(queryByTestId('cancel-note')).toBeEnabled()
+            })
+        })
+    })
+
+    describe('When removing a  section', () => {
+        test('Enable both save and cancel buttons', async () => {
+            const sections: ISection[] = [
+                mockTranslationSection({ id: '1', from: 'Один' }),
+                mockTranslationSection({ id: '2' }),
+            ]
+            const { queryByTestId, queryAllByTestId } = render(<Note sections={sections} />)
+
+            await waitFor(() => {
+                expect(queryByTestId('save-note')).toBeDisabled()
+                expect(queryByTestId('cancel-note')).toBeDisabled()
+            })
+
+            fireEvent.press(queryAllByTestId('remove-section')[0])
+
+            await waitFor(() => expect(queryByTestId('remove-box')).toBeTruthy())
+
+            fireEvent.press(queryAllByTestId('remove-box')[0])
+
+            expect(queryByTestId('save-note')).toBeEnabled()
+            expect(queryByTestId('cancel-note')).toBeEnabled()
+        })
+    })
 })
 
-const mockTranslationSection = ({ id, from = '', to = '' }: { id: String; from?: String; to?: String }): ISection => {
+describe('Cancel button', () => {
+    describe('When clicked', () => {
+        test('Restores to initial sections', async () => {
+            const sections: ISection[] = [mockTranslationSection({ id: '1', from: 'Один' })]
+            const { queryByTestId, queryByDisplayValue } = render(<Note sections={sections} />)
+
+            await waitFor(() => expect(queryByTestId('cancel-note')).toBeDisabled())
+
+            fireEvent.changeText(queryByDisplayValue('Один'), 'Море')
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Море')).toBeTruthy()
+                expect(queryByTestId('cancel-note')).toBeEnabled()
+            })
+
+            fireEvent.press(queryByTestId('cancel-note'))
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Один')).toBeTruthy()
+                expect(queryByDisplayValue('Море')).not.toBeTruthy()
+                expect(queryByTestId('cancel-note')).toBeDisabled()
+            })
+        })
+    })
+})
+
+const mockTranslationSection = ({ id, from = '', to = '' }: { id: string; from?: string; to?: string }): ISection => {
     return {
         type: '@native/translation',
         id,
@@ -200,11 +270,5 @@ const mockTranslationSection = ({ id, from = '', to = '' }: { id: String; from?:
         props: { from, to },
     }
 }
-//Test given existing note, when to save and when to cancel
-/*
- * When state is != initial state :check:
- * When adding new section @TODO
- * When removing section @TODO
-*/
 
-// Test save and cancel actions!!
+// Test save action!!
