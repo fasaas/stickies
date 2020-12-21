@@ -14,12 +14,12 @@ type Action = {
 }
 type Dispatch = (action: Action) => void
 
-const init = (initialValue?: ISection[]): State => {
+const init = ({ sections }: { sections?: ISection[] }): State => {
     const defaultValue: ISection[] = [
         { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]
-    return !!initialValue
-        ? { sections: initialValue, initial: { sections: JSON.stringify(initialValue) }, isChanged: false }
+    return !!sections
+        ? { sections: sections, initial: { sections: JSON.stringify(sections) }, isChanged: false }
         : { sections: defaultValue, initial: { sections: JSON.stringify(defaultValue) }, isChanged: false }
 }
 const noteReducer = (state: State, action: Action): State => {
@@ -76,8 +76,8 @@ const noteReducer = (state: State, action: Action): State => {
 const SectionsContext = createContext<State | undefined>(undefined)
 const SectionsDispatchContext = createContext<Dispatch | undefined>(undefined)
 
-const SectionsProvider = ({ value, children }: { value?: ISection[]; children: ReactNode }) => {
-    const [state, dispatch] = useReducer(noteReducer, value, init)
+const SectionsProvider = ({ sections, children }: { sections?: ISection[]; children: ReactNode }) => {
+    const [state, dispatch] = useReducer(noteReducer, { sections }, init)
 
     return (
         <SectionsContext.Provider value={state}>

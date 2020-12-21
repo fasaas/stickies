@@ -4,7 +4,7 @@ import Sections from './sections'
 
 export default ({ sections }: { sections?: ISection[] }) => {
     return (
-        <SectionsProvider value={sections}>
+        <SectionsProvider sections={sections}>
             <Sections />
         </SectionsProvider>
     )
