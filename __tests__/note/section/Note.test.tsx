@@ -262,6 +262,31 @@ describe('Cancel button', () => {
     })
 })
 
+describe('Save button', () => {
+    describe('When clicked', () => {
+        test('Disables save button', async () => {
+            const sections: ISection[] = [mockTranslationSection({ id: '1', from: 'Один' })]
+            const { queryByTestId, queryByDisplayValue } = render(<Note sections={sections} />)
+
+            await waitFor(() => expect(queryByTestId('cancel-note')).toBeDisabled())
+
+            fireEvent.changeText(queryByDisplayValue('Один'), 'Море')
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Море')).toBeTruthy()
+                expect(queryByTestId('save-note')).toBeEnabled()
+            })
+
+            fireEvent.press(queryByTestId('save-note'))
+
+            await waitFor(() => {
+                expect(queryByDisplayValue('Море')).toBeTruthy()
+                expect(queryByTestId('save-note')).toBeDisabled()
+            })
+        })
+    })
+})
+
 const mockTranslationSection = ({ id, from = '', to = '' }: { id: string; from?: string; to?: string }): ISection => {
     return {
         type: '@native/translation',

@@ -9,7 +9,7 @@ export type ISection = {
 
 type State = { sections: ISection[]; initial: string; isChanged: Boolean }
 type Action = {
-    type: 'prop-update' | 'remove-section' | 'add-section' | 'cancel'
+    type: 'prop-update' | 'remove-section' | 'add-section' | 'cancel' | 'save'
     event?: any
 }
 type Dispatch = (action: Action) => void
@@ -59,9 +59,14 @@ const noteReducer = (state: State, action: Action): State => {
             return { sections, initial, isChanged: true }
         }
 
-        case 'cancel':
+        case 'cancel': {
             const { initial } = state
             return { sections: JSON.parse(initial), initial, isChanged: false }
+        }
+        case 'save': {
+            const { sections } = state
+            return { sections, initial: JSON.stringify(sections), isChanged: false }
+        }
         default: {
             throw new Error(`Type ${type} unsupported`)
         }
