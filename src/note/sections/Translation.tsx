@@ -12,7 +12,7 @@ export const Translation = ({ props, id }: ISection) => {
                     placeholder='Например ...'
                     value={props.from}
                     onChangeText={(text) => {
-                        dispatch({ type: 'prop-update', event: { id, path: 'from', value: text } })
+                        dispatch({ type: 'update-prop', event: { id, path: 'from', value: text } })
                     }}
                 />
                 <Text>A castellano</Text>
@@ -20,7 +20,7 @@ export const Translation = ({ props, id }: ISection) => {
                     placeholder='Por ejemplo ...'
                     value={props.to}
                     onChangeText={(text) => {
-                        dispatch({ type: 'prop-update', event: { id, path: 'to', value: text } })
+                        dispatch({ type: 'update-prop', event: { id, path: 'to', value: text } })
                     }}
                 />
             </View>

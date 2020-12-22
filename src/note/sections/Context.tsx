@@ -7,47 +7,59 @@ export type ISection = {
     props: any
 }
 
-type State = { sections: ISection[]; initial: { sections: string }; isChanged: boolean }
+type State = { title: string; sections: ISection[]; initial: { title: string; sections: string }; isChanged: boolean }
 type Action = {
-    type: 'prop-update' | 'remove-section' | 'add-section' | 'cancel' | 'save'
+    type: 'update-prop' | 'remove-section' | 'add-section' | 'reset' | 'save' | 'update-title'
     event?: any
 }
 type Dispatch = (action: Action) => void
 
-const init = ({ sections }: { sections?: ISection[] }): State => {
+const init = ({ title, sections }: { title?: string; sections?: ISection[] }): State => {
     const defaultValue: ISection[] = [
         { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]
+
+    const initialTitle = title || ''
     return !!sections
-        ? { sections: sections, initial: { sections: JSON.stringify(sections) }, isChanged: false }
-        : { sections: defaultValue, initial: { sections: JSON.stringify(defaultValue) }, isChanged: false }
+        ? {
+              title: initialTitle,
+              sections: sections,
+              initial: { sections: JSON.stringify(sections), title: initialTitle },
+              isChanged: false,
+          }
+        : {
+              title: initialTitle,
+              sections: defaultValue,
+              initial: { sections: JSON.stringify(defaultValue), title: initialTitle },
+              isChanged: false,
+          }
 }
 const noteReducer = (state: State, action: Action): State => {
     const { type, event } = action
 
     switch (type) {
-        case 'prop-update': {
+        case 'update-prop': {
             const { id, path, value } = event
-            const { initial, sections } = state
+            const { initial, sections, title } = state
             const section: ISection | undefined = sections.find((section) => section.id === id)
             if (section) {
                 section.props[path] = value
             }
 
-            const isChanged = JSON.stringify(sections) !== initial.sections
+            const isChanged = initial.sections !== JSON.stringify(sections)
 
-            return { sections, initial, isChanged }
+            return { title, sections, initial, isChanged }
         }
         case 'remove-section': {
-            const { sections, initial } = state
+            const { sections, initial, title } = state
 
             const { id } = event
             const filteredSections = sections.filter((section) => section.id !== id)
 
-            return { sections: filteredSections, initial, isChanged: true }
+            return { title, sections: filteredSections, initial, isChanged: true }
         }
         case 'add-section': {
-            const { sections, initial } = state
+            const { sections, initial, title } = state
             const { type } = event
             sections.push({
                 type: '@native/translation',
@@ -56,16 +68,22 @@ const noteReducer = (state: State, action: Action): State => {
                 props: { from: '', to: '' },
             })
 
-            return { sections, initial, isChanged: true }
+            return { title, sections, initial, isChanged: true }
         }
 
-        case 'cancel': {
+        case 'reset': {
             const { initial } = state
-            return { sections: JSON.parse(initial.sections), initial, isChanged: false }
+            return { title: initial.title, sections: JSON.parse(initial.sections), initial, isChanged: false }
         }
         case 'save': {
-            const { sections } = state
-            return { sections, initial: { sections: JSON.stringify(sections) }, isChanged: false }
+            const { sections, title } = state
+            return { title, sections, initial: { sections: JSON.stringify(sections), title }, isChanged: false }
+        }
+        case 'update-title': {
+            const { sections, title, initial } = state
+
+            const isChanged = initial.title !== event.title
+            return { sections, title: event.title, initial, isChanged }
         }
         default: {
             throw new Error(`Type ${type} unsupported`)
@@ -76,8 +94,14 @@ const noteReducer = (state: State, action: Action): State => {
 const SectionsContext = createContext<State | undefined>(undefined)
 const SectionsDispatchContext = createContext<Dispatch | undefined>(undefined)
 
-const SectionsProvider = ({ sections, children }: { sections?: ISection[]; children: ReactNode }) => {
-    const [state, dispatch] = useReducer(noteReducer, { sections }, init)
+type SectionsProviderProps = {
+    title?: string
+    sections?: ISection[]
+    children: ReactNode
+}
+
+const SectionsProvider = ({ title, sections, children }: SectionsProviderProps) => {
+    const [state, dispatch] = useReducer(noteReducer, { sections, title }, init)
 
     return (
         <SectionsContext.Provider value={state}>

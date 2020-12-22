@@ -2,9 +2,9 @@ import React from 'react'
 import { ISection, SectionsProvider } from './sections/Context'
 import Sections from './sections'
 
-export default ({ sections }: { sections?: ISection[] }) => {
+export default ({ title, sections }: { title?: string; sections?: ISection[] }) => {
     return (
-        <SectionsProvider sections={sections}>
+        <SectionsProvider title={title} sections={sections}>
             <Sections />
         </SectionsProvider>
     )

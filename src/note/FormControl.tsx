@@ -8,20 +8,8 @@ export const FormControl = () => {
 
     return (
         <View key='submit-view'>
-            <Button
-                testID='save-note'
-                title='Save'
-                accessibilityLabel='Save note'
-                disabled={!isChanged}
-                onPress={() => dispatch({ type: 'save' })}
-            />
-            <Button
-                testID='cancel-note'
-                title='Cancel'
-                accessibilityLabel='Cancel'
-                disabled={!isChanged}
-                onPress={() => dispatch({ type: 'cancel' })}
-            />
+            <Button testID='save-note' title='Save' disabled={!isChanged} onPress={() => dispatch({ type: 'save' })} />
+            <Button title='Reset' disabled={!isChanged} onPress={() => dispatch({ type: 'reset' })} />
         </View>
     )
 }

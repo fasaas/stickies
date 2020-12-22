@@ -24,7 +24,7 @@ export default ({ section }: { section: ISection }) => {
                 </Fragment>
             ) : (
                 <Fragment>
-                    <Button testID='undo-button' title='Undo' onPress={() => show(true)} />
+                    <Button title='Undo' onPress={() => show(true)} />
                     <AntDesign
                         testID='remove-box'
                         name='close'
