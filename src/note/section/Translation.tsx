@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, TextInput, View } from 'react-native'
-import { ISection, useDispatch } from './Context'
+import { useDispatch } from '../context'
+import { ISection } from '../Types'
 
 export const Translation = ({ props, id }: ISection) => {
     const dispatch = useDispatch()

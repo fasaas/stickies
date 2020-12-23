@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import Note from './note/Note'
+import { StyleSheet, View } from 'react-native'
+import NoteScreen from './note'
 
 export const App = () => {
     return (
         <View style={styles.container}>
-            <Note />
+            <NoteScreen />
             <StatusBar style='auto' />
         </View>
     )

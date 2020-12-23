@@ -1,11 +1,31 @@
 import React from 'react'
-import { ISection, SectionsProvider } from './sections/Context'
-import Sections from './sections'
+import { TextInput, View } from 'react-native'
+import { FormControl } from './FormControl'
+import { Picker } from './Picker'
+import { useDispatch, useNote } from './context'
+import { ISection } from './Types'
+import Section from './section'
 
-export default ({ title, sections }: { title?: string; sections?: ISection[] }) => {
+export const Note = () => {
+    const { sections, title } = useNote()
+    const dispatch = useDispatch()
     return (
-        <SectionsProvider title={title} sections={sections}>
-            <Sections />
-        </SectionsProvider>
+        <View key='note-view'>
+            <View key='title-view'>
+                <TextInput
+                    placeholder='Note title'
+                    value={title}
+                    onChangeText={(title) => dispatch({ type: 'update-title', event: { title } })}
+                />
+            </View>
+            <View key='sections-view'>
+                {sections.map((section: ISection, index) => {
+                    const { type, id } = section
+                    return <Section key={`${type}-${id}-${index}`} section={section} />
+                })}
+            </View>
+            <Picker />
+            <FormControl />
+        </View>
     )
 }

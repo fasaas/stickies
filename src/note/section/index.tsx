@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { Button, Text, View } from 'react-native'
-import { ISection, useDispatch } from './Context'
+import { useDispatch } from '../context'
+import { ISection } from '../Types'
 import { Translation } from './Translation'
 import { AntDesign, FontAwesome } from '@expo/vector-icons'
 
