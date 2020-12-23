@@ -7,7 +7,13 @@ export type ISection = {
     props: any
 }
 
-type State = { title: string; sections: ISection[]; initial: { title: string; sections: string }; isChanged: boolean }
+type State = {
+    title: string
+    sections: ISection[]
+    initial: { title: string; sections: string }
+    can: { save: boolean; reset: boolean }
+    isChanged: boolean
+}
 type Action = {
     type: 'update-prop' | 'remove-section' | 'add-section' | 'reset' | 'save' | 'update-title'
     event?: any
@@ -15,24 +21,19 @@ type Action = {
 type Dispatch = (action: Action) => void
 
 const init = ({ title, sections }: { title?: string; sections?: ISection[] }): State => {
-    const defaultValue: ISection[] = [
+    const defaultSections: ISection[] = [
         { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]
 
     const initialTitle = title || ''
-    return !!sections
-        ? {
-              title: initialTitle,
-              sections: sections,
-              initial: { sections: JSON.stringify(sections), title: initialTitle },
-              isChanged: false,
-          }
-        : {
-              title: initialTitle,
-              sections: defaultValue,
-              initial: { sections: JSON.stringify(defaultValue), title: initialTitle },
-              isChanged: false,
-          }
+    const initialSections = sections || defaultSections
+    return {
+        title: initialTitle,
+        sections: initialSections,
+        initial: { sections: JSON.stringify(initialSections), title: initialTitle },
+        isChanged: false,
+        can: { save: false, reset: false },
+    }
 }
 const noteReducer = (state: State, action: Action): State => {
     const { type, event } = action
@@ -40,7 +41,7 @@ const noteReducer = (state: State, action: Action): State => {
     switch (type) {
         case 'update-prop': {
             const { id, path, value } = event
-            const { initial, sections, title } = state
+            const { initial, sections, title, can } = state
             const section: ISection | undefined = sections.find((section) => section.id === id)
             if (section) {
                 section.props[path] = value
@@ -48,7 +49,7 @@ const noteReducer = (state: State, action: Action): State => {
 
             const isChanged = initial.sections !== JSON.stringify(sections)
 
-            return { title, sections, initial, isChanged }
+            return { title, sections, initial, isChanged, can }
         }
         case 'remove-section': {
             const { sections, initial, title } = state
@@ -56,7 +57,7 @@ const noteReducer = (state: State, action: Action): State => {
             const { id } = event
             const filteredSections = sections.filter((section) => section.id !== id)
 
-            return { title, sections: filteredSections, initial, isChanged: true }
+            return { title, sections: filteredSections, initial, isChanged: true, can: { save: true, reset: true } }
         }
         case 'add-section': {
             const { sections, initial, title } = state
@@ -68,22 +69,34 @@ const noteReducer = (state: State, action: Action): State => {
                 props: { from: '', to: '' },
             })
 
-            return { title, sections, initial, isChanged: true }
+            return { title, sections, initial, isChanged: true, can: { save: true, reset: true } }
         }
 
         case 'reset': {
             const { initial } = state
-            return { title: initial.title, sections: JSON.parse(initial.sections), initial, isChanged: false }
+            return {
+                title: initial.title,
+                sections: JSON.parse(initial.sections),
+                initial,
+                isChanged: false,
+                can: { save: false, reset: false },
+            }
         }
         case 'save': {
             const { sections, title } = state
-            return { title, sections, initial: { sections: JSON.stringify(sections), title }, isChanged: false }
+            return {
+                title,
+                sections,
+                initial: { sections: JSON.stringify(sections), title },
+                isChanged: false,
+                can: { save: false, reset: false },
+            }
         }
         case 'update-title': {
-            const { sections, title, initial } = state
+            const { sections, title, initial, can } = state
 
             const isChanged = initial.title !== event.title
-            return { sections, title: event.title, initial, isChanged }
+            return { sections, title: event.title, initial, isChanged, can }
         }
         default: {
             throw new Error(`Type ${type} unsupported`)
