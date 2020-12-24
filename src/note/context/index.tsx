@@ -2,8 +2,8 @@ import React, { createContext, ReactNode, useContext } from 'react'
 import { useContextReducer } from './Reducer'
 import { State, Dispatch, ISection } from '../Types'
 
-const SectionsContext = createContext<State | undefined>(undefined)
-const SectionsDispatchContext = createContext<Dispatch | undefined>(undefined)
+const NoteStateContext = createContext<State | undefined>(undefined)
+const NoteDispatchContext = createContext<Dispatch | undefined>(undefined)
 
 type SectionsProviderProps = {
     title?: string
@@ -15,14 +15,14 @@ const NoteProvider = ({ title, sections, children }: SectionsProviderProps) => {
     const [state, dispatch] = useContextReducer({ title, sections })
 
     return (
-        <SectionsContext.Provider value={state}>
-            <SectionsDispatchContext.Provider value={dispatch}>{children}</SectionsDispatchContext.Provider>
-        </SectionsContext.Provider>
+        <NoteStateContext.Provider value={state}>
+            <NoteDispatchContext.Provider value={dispatch}>{children}</NoteDispatchContext.Provider>
+        </NoteStateContext.Provider>
     )
 }
 
 const useNote = () => {
-    const ctx = useContext(SectionsContext)
+    const ctx = useContext(NoteStateContext)
     if (!ctx) {
         throw new Error('useNote must be used within <NoteProvider>')
     }
@@ -31,7 +31,7 @@ const useNote = () => {
 }
 
 const useDispatch = () => {
-    const ctx = useContext(SectionsDispatchContext)
+    const ctx = useContext(NoteDispatchContext)
     if (!ctx) {
         throw new Error('useDispatch must be used within <NoteProvider>')
     }
