@@ -28,9 +28,14 @@ const noteReducer = (state: State, action: Action): State => {
                 section.props[path] = value
             }
 
-            const canSaveOrReset = initial.sections !== JSON.stringify(sections)
+            const sectionsAreChanged = initial.sections !== JSON.stringify(sections)
+            const thereAreSections = sections.length > 0
+            const thereIsTitle = title.trim().length > 0
 
-            return { title, sections, initial, can: { save: canSaveOrReset, reset: canSaveOrReset } }
+            const canSave = thereIsTitle && thereAreSections && sectionsAreChanged
+            const canReset = sectionsAreChanged
+
+            return { title, sections, initial, can: { save: canSave, reset: canReset } }
         }
 
         case 'remove-section': {
@@ -39,7 +44,11 @@ const noteReducer = (state: State, action: Action): State => {
             const { id } = event
             const filteredSections = sections.filter((section) => section.id !== id)
 
-            return { title, sections: filteredSections, initial, can: { save: true, reset: true } }
+            const thereIsTitle = title.trim().length > 0
+            const thereAreSections = filteredSections.length > 0
+            const canSave = thereIsTitle && thereAreSections
+
+            return { title, sections: filteredSections, initial, can: { save: canSave, reset: true } }
         }
 
         case 'add-section': {
@@ -51,7 +60,10 @@ const noteReducer = (state: State, action: Action): State => {
                 props: { from: '', to: '' },
             })
 
-            return { title, sections, initial, can: { save: true, reset: true } }
+            const thereIsTitle = title.trim().length > 0
+            const canSave = thereIsTitle
+
+            return { title, sections, initial, can: { save: canSave, reset: true } }
         }
 
         case 'reset': {
@@ -78,7 +90,10 @@ const noteReducer = (state: State, action: Action): State => {
             const { sections, initial } = state
 
             const canReset = initial.title !== event.title
-            const canSave = canReset && !!event.title.trim()
+            const thereAreSections = sections.length > 0
+            const thereIsTitle = event.title.trim().length > 0
+
+            const canSave = canReset && thereAreSections && thereIsTitle
             return { sections, title: event.title, initial, can: { save: canSave, reset: canReset } }
         }
 

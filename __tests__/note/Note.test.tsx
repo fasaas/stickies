@@ -1,6 +1,6 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
-import { fireEvent, render, waitFor } from '@testing-library/react-native'
+import { fireEvent, render, waitFor, within } from '@testing-library/react-native'
 import Note from '../../src/note'
 import { ISection } from '../../src/note/Types'
 
@@ -47,11 +47,12 @@ describe('Note', () => {
             })
 
             test('Updating a section but title is still empty', async () => {
-                const { queryByText, queryByDisplayValue, queryAllByDisplayValue } = render(
+                const { queryByText, queryByDisplayValue, queryByTestId } = render(
                     <Note sections={[AnEmptySection()]} />
                 )
 
-                fireEvent.changeText(queryAllByDisplayValue('')[0], 'any other display value')
+                const sections = within(queryByTestId('sections-view'))
+                fireEvent.changeText(sections.queryAllByDisplayValue('')[0], 'any other display value')
 
                 await waitFor(() => expect(queryByDisplayValue('any other display value')).toBeTruthy())
 
@@ -98,6 +99,30 @@ describe('Note', () => {
                 fireEvent.press(queryByTestId('remove-box'))
 
                 expect(queryAllByTestId('section')).toHaveLength(0)
+                expect(queryByText('Save')).toBeDisabled()
+            })
+
+            test('Changing title before removing all sections', async () => {
+                const {
+                    queryByText,
+                    queryByTestId,
+                    queryAllByTestId,
+                    queryByPlaceholderText,
+                    queryByDisplayValue,
+                } = render(<Note sections={[AnEmptySection()]} />)
+
+                fireEvent.changeText(queryByPlaceholderText('Note title'), 'title')
+
+                await waitFor(() => expect(queryByDisplayValue('title')).toBeTruthy())
+
+                fireEvent.press(queryByTestId('remove-section'))
+
+                await waitFor(() => expect(queryByText('Undo')).toBeTruthy())
+
+                fireEvent.press(queryByTestId('remove-box'))
+
+                await waitFor(() => expect(queryAllByTestId('section')).toHaveLength(0))
+
                 expect(queryByText('Save')).toBeDisabled()
             })
 
@@ -181,7 +206,7 @@ describe('Note', () => {
 
             test('Updated sections are the same as the given sections while title has not changed', async () => {
                 const { queryByText, queryByDisplayValue } = render(
-                    <Note sections={[ATranslationSection({ id: '1', from: 'a from value' })]} />
+                    <Note title='title' sections={[ATranslationSection({ id: '1', from: 'a from value' })]} />
                 )
 
                 fireEvent.changeText(queryByDisplayValue('a from value'), 'a different from value')
@@ -356,11 +381,16 @@ describe('Note', () => {
 
                         fireEvent.changeText(queryByDisplayValue('title'), 'Updated title')
                         fireEvent.changeText(queryAllByDisplayValue('')[0], 'Updated text')
+                        fireEvent.press(queryByText('Save'))
+
+                        fireEvent.changeText(queryByDisplayValue('Updated title'), 'Another updated title')
+                        fireEvent.changeText(queryByDisplayValue('Updated text'), 'Another updated text')
                         fireEvent.press(queryByText('Reset'))
 
                         await waitFor(() => {
-                            expect(queryByDisplayValue('title')).toBeTruthy()
-                            expect(queryAllByTestId('section')).toHaveLength(2)
+                            expect(queryByDisplayValue('Updated title')).toBeTruthy()
+                            expect(queryAllByTestId('section')).toHaveLength(3)
+                            expect(queryByDisplayValue('Updated text')).toBeTruthy()
                         })
                     })
                 })

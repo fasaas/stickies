@@ -18,7 +18,7 @@ export const Note = () => {
                     onChangeText={(title) => dispatch({ type: 'update-title', event: { title } })}
                 />
             </View>
-            <View key='sections-view'>
+            <View key='sections-view' testID='sections-view'>
                 {sections.map((section: ISection, index) => {
                     const { type, id } = section
                     return <Section key={`${type}-${id}-${index}`} section={section} />
