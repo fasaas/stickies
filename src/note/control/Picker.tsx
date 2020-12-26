@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, View } from 'react-native'
 import { Picker as NativePicker } from '@react-native-picker/picker'
-import { useDispatch } from './context'
+import { useDispatch } from '../context'
 
 export const Picker = () => {
     const dispatch = useDispatch()

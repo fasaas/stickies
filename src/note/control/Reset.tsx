@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, View } from 'react-native'
+import { Button } from 'react-native'
 import { useDispatch, useNote } from '../context'
 
 export const ResetNote = () => {

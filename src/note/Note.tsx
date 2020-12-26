@@ -1,7 +1,7 @@
 import React from 'react'
 import { TextInput, View } from 'react-native'
 import { FormControl } from './control'
-import { Picker } from './Picker'
+import { Picker } from './control/Picker'
 import { useDispatch, useNote } from './context'
 import { ISection } from './Types'
 import Section from './section'
