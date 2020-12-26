@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from 'react-native'
 import { useDispatch, useNote } from '../context'
 
-export const ResetNote = () => {
+export const ResetControl = () => {
     const { can } = useNote()
     const dispatch = useDispatch()
 

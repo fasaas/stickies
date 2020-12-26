@@ -3,6 +3,7 @@ import React from 'react'
 import { fireEvent, render, waitFor, within } from '@testing-library/react-native'
 import Note from '../../../src/screens/note'
 import { ISection } from '../../../src/screens/note/Types'
+import SaveClient from '../../../src/screens/note/control/SaveClient'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'
@@ -11,6 +12,8 @@ const consoleError = console.error
 jest.spyOn(console, 'error').mockImplementation((message, ...optionalParams) => {
     if (!message.includes(errorToSilence)) consoleError(message, optionalParams)
 })
+
+jest.spyOn(console, 'warn').mockImplementation()
 
 describe('Note', () => {
     describe('Add section button', () => {
@@ -366,7 +369,10 @@ describe('Note', () => {
         })
 
         describe('Given any note', () => {
-            describe('When saving updated note', () => {
+            describe('When successfully saving updated note', () => {
+                beforeEach(() => {
+                    SaveClient.save = jest.fn().mockResolvedValue({ failed: false })
+                })
                 describe('When resetting unsaved content', () => {
                     test('Reset note content back to the last saved content', async () => {
                         const { queryByText, queryByDisplayValue, queryAllByTestId, queryAllByDisplayValue } = render(
@@ -382,6 +388,8 @@ describe('Note', () => {
                         fireEvent.changeText(queryByDisplayValue('title'), 'Updated title')
                         fireEvent.changeText(queryAllByDisplayValue('')[0], 'Updated text')
                         fireEvent.press(queryByText('Save'))
+
+                        await waitFor(() => expect(queryByText('Save')).toBeDisabled())
 
                         fireEvent.changeText(queryByDisplayValue('Updated title'), 'Another updated title')
                         fireEvent.changeText(queryByDisplayValue('Updated text'), 'Another updated text')

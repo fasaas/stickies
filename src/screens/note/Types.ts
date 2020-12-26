@@ -6,6 +6,7 @@ export type ISection = {
 }
 
 export type State = {
+    id: string
     title: string
     sections: ISection[]
     initial: { title: string; sections: string }

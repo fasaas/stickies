@@ -1,10 +1,11 @@
 import React from 'react'
 import { TextInput, View } from 'react-native'
-import { FormControl } from './control'
 import { Picker } from './control/Picker'
 import { useDispatch, useNote } from './context'
 import { ISection } from './Types'
 import Section from './section'
+import { SaveControl } from './control/Save'
+import { ResetControl } from './control/Reset'
 
 export const Note = () => {
     const { sections, title } = useNote()
@@ -25,7 +26,10 @@ export const Note = () => {
                 })}
             </View>
             <Picker />
-            <FormControl />
+            <View key='submit-view'>
+                <SaveControl />
+                <ResetControl />
+            </View>
         </View>
     )
 }

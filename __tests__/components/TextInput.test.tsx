@@ -1,7 +1,9 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
-import { fireEvent, render, waitFor } from '@testing-library/react-native'
+import { fireEvent, render } from '@testing-library/react-native'
 import { TextInput } from '../../src/components/TextInput'
+
+jest.spyOn(console, 'warn').mockImplementation()
 
 describe('Customized react native Text Input', () => {
     describe('Given empty text input', () => {

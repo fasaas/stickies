@@ -3,6 +3,8 @@ import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
 import Note from '../../../../src/screens/note'
 
+jest.spyOn(console, 'warn').mockImplementation()
+
 describe('Translation section', () => {
     test('Renders a from input', () => {
         const { queryByPlaceholderText } = render(<Note sections={[ATranslationSection({ id: '1' })]} />)

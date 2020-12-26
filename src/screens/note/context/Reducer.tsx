@@ -1,14 +1,16 @@
 import { useReducer } from 'react'
 import { ISection, State, Action } from '../Types'
 
-const init = ({ title, sections }: { title?: string; sections?: ISection[] }): State => {
+const init = ({ id, title, sections }: { id?: string; title?: string; sections?: ISection[] }): State => {
     const defaultSections: ISection[] = [
         { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]
 
     const initialTitle = title || ''
     const initialSections = sections || defaultSections
+    const initialId = id || `note-${Date.now().toString()}`
     return {
+        id: initialId,
         title: initialTitle,
         sections: initialSections,
         initial: { sections: JSON.stringify(initialSections), title: initialTitle },
@@ -35,24 +37,23 @@ const noteReducer = (state: State, action: Action): State => {
             const canSave = thereIsTitle && thereAreSections && sectionsAreChanged
             const canReset = sectionsAreChanged
 
-            return { title, sections, initial, can: { save: canSave, reset: canReset } }
+            return { id: state.id, title, sections, initial, can: { save: canSave, reset: canReset } }
         }
 
         case 'remove-section': {
-            const { sections, initial, title } = state
+            const { sections, initial, title, id } = state
 
-            const { id } = event
-            const filteredSections = sections.filter((section) => section.id !== id)
+            const filteredSections = sections.filter((section) => section.id !== event.id)
 
             const thereIsTitle = title.trim().length > 0
             const thereAreSections = filteredSections.length > 0
             const canSave = thereIsTitle && thereAreSections
 
-            return { title, sections: filteredSections, initial, can: { save: canSave, reset: true } }
+            return { id, title, sections: filteredSections, initial, can: { save: canSave, reset: true } }
         }
 
         case 'add-section': {
-            const { sections, initial, title } = state
+            const { sections, initial, title, id } = state
             sections.push({
                 type: '@native/translation',
                 name: 'Translation',
@@ -63,12 +64,13 @@ const noteReducer = (state: State, action: Action): State => {
             const thereIsTitle = title.trim().length > 0
             const canSave = thereIsTitle
 
-            return { title, sections, initial, can: { save: canSave, reset: true } }
+            return { id, title, sections, initial, can: { save: canSave, reset: true } }
         }
 
         case 'reset': {
-            const { initial } = state
+            const { initial, id } = state
             return {
+                id,
                 title: initial.title,
                 sections: JSON.parse(initial.sections),
                 initial,
@@ -77,8 +79,9 @@ const noteReducer = (state: State, action: Action): State => {
         }
 
         case 'save': {
-            const { sections, title } = state
+            const { sections, title, id } = state
             return {
+                id,
                 title,
                 sections,
                 initial: { sections: JSON.stringify(sections), title },
@@ -103,6 +106,6 @@ const noteReducer = (state: State, action: Action): State => {
     }
 }
 
-export const useContextReducer = ({ title, sections }: { title?: string; sections?: ISection[] }) => {
-    return useReducer(noteReducer, { title, sections }, init)
+export const useContextReducer = ({ id, title, sections }: { id?: string; title?: string; sections?: ISection[] }) => {
+    return useReducer(noteReducer, { id, title, sections }, init)
 }

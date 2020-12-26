@@ -6,13 +6,14 @@ const NoteStateContext = createContext<State | undefined>(undefined)
 const NoteDispatchContext = createContext<Dispatch | undefined>(undefined)
 
 type SectionsProviderProps = {
+    id?: string
     title?: string
     sections?: ISection[]
     children: ReactNode
 }
 
-const NoteProvider = ({ title, sections, children }: SectionsProviderProps) => {
-    const [state, dispatch] = useContextReducer({ title, sections })
+const NoteProvider = ({ id, title, sections, children }: SectionsProviderProps) => {
+    const [state, dispatch] = useContextReducer({ id, title, sections })
 
     return (
         <NoteStateContext.Provider value={state}>
