@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { ActivityIndicator, Button, Modal, Text, View } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import { useDispatch, useNote } from '../context'
-import SaveClient from './SaveClient'
+import SaveClient from '../../../clients/NoteClient'
 
 enum SaveStatus {
     Unsaved,

@@ -1,4 +1,4 @@
-import { ISection } from '../Types'
+import { ISection } from '../screens/note/Types'
 
 const save = async (id: string, content: { title: string; sections: ISection[] }) => {
     return { failed: false }
