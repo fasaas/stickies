@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, waitFor, within } from '@testing-library/re
 import { ExplorerScreen } from '../../../src/screens/ExplorerScreen'
 import ExplorerClient from '../../../src/clients/ExplorerClient'
 import { Button as nativeButton } from 'react-native'
+import NoteClient from '../../../src/clients/NoteClient'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'
@@ -219,14 +220,16 @@ describe('Explorer', () => {
                 })
             })
 
-            describe('When clicking on the cross button', () => {
+            describe('When clicking on the permanently delete button', () => {
                 test('Completely remove stored note', async () => {
+                    const spy = jest.fn()
+                    NoteClient.erase = spy
                     const notes = [{ id: '1', title: 'first title' }]
                     ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
                         notes,
                     })
 
-                    const { queryByText, queryAllByTestId, queryByTestId } = render(<ExplorerScreen />)
+                    const { queryByText, queryByTestId } = render(<ExplorerScreen />)
 
                     await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
                     fireEvent.press(queryByTestId('remove-note'))
@@ -236,6 +239,7 @@ describe('Explorer', () => {
                     fireEvent.press(queryByTestId('remove-box'))
 
                     await waitFor(() => {
+                        expect(spy).toHaveBeenCalledWith('1')
                         expect(queryByText('first title')).not.toBeTruthy()
                         expect(queryByText("You don't have any saved notes")).toBeTruthy()
                         expect(queryByText('Create new note')).toBeEnabled()

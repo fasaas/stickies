@@ -4,4 +4,6 @@ const save = async (id: string, content: { title: string; sections: ISection[] }
     return { failed: false }
 }
 
-export default { save }
+const erase = async (id: string) => {}
+
+export default { save, erase }
