@@ -1,7 +1,7 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { cleanup, fireEvent, render, waitFor, within } from '@testing-library/react-native'
-import { ExplorerScreen } from '../../../src/screens/ExplorerScreen'
+import { Explorer } from '../../../src/screens/explorer'
 import ExplorerClient from '../../../src/clients/ExplorerClient'
 import { Button as nativeButton } from 'react-native'
 import NoteClient from '../../../src/clients/NoteClient'
@@ -32,13 +32,13 @@ describe('Explorer', () => {
     })
 
     test('Renders a loading indicator while fetching notes', async () => {
-        const { queryByTestId } = render(<ExplorerScreen />)
+        const { queryByTestId } = render(<Explorer />)
 
         await waitFor(() => expect(queryByTestId('pending-content')).toBeTruthy())
     })
 
     test('Calls explorer client to fetch notes', async () => {
-        render(<ExplorerScreen />)
+        render(<Explorer />)
 
         await waitFor(() => expect(ExplorerClient.getExplorerContent).toHaveBeenCalled())
     })
@@ -46,14 +46,14 @@ describe('Explorer', () => {
     describe('Given explorer client fails to fetch notes', () => {
         test('Render a message explaining inability to fetch notes', async () => {
             ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({ failed: true })
-            const { queryByText } = render(<ExplorerScreen />)
+            const { queryByText } = render(<Explorer />)
 
             await waitFor(() => expect(queryByText('Unable to retrieve notes')).toBeTruthy())
         })
 
         test('Render a refresh button to hint a retry by pressing it', async () => {
             ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({ failed: true })
-            const { queryByTestId } = render(<ExplorerScreen />)
+            const { queryByTestId } = render(<Explorer />)
 
             await waitFor(() => expect(queryByTestId('retry-fetching-notes')).toBeTruthy())
         })
@@ -61,7 +61,7 @@ describe('Explorer', () => {
         describe('When clicking on refresh button', () => {
             test('Calls explorer again client to fetch notes', async () => {
                 ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({ failed: true })
-                const { queryByTestId } = render(<ExplorerScreen />)
+                const { queryByTestId } = render(<Explorer />)
 
                 await waitFor(() => expect(queryByTestId('retry-fetching-notes')).toBeTruthy())
 
@@ -73,7 +73,7 @@ describe('Explorer', () => {
             test('Renders again a loading indicator while fetching notes', async () => {
                 ExplorerClient.getExplorerContent = jest.fn().mockResolvedValue({ failed: true })
 
-                const { queryByTestId } = render(<ExplorerScreen />)
+                const { queryByTestId } = render(<Explorer />)
 
                 await waitFor(() => expect(queryByTestId('retry-fetching-notes')).toBeTruthy())
 
@@ -90,7 +90,7 @@ describe('Explorer', () => {
                 notes: [],
             })
 
-            const { queryByText } = render(<ExplorerScreen />)
+            const { queryByText } = render(<Explorer />)
 
             await waitFor(() => {
                 expect(queryByText("You don't have any saved notes")).toBeTruthy()
@@ -102,7 +102,7 @@ describe('Explorer', () => {
                 notes: [],
             })
 
-            const { queryByText } = render(<ExplorerScreen />)
+            const { queryByText } = render(<Explorer />)
 
             await waitFor(() => {
                 expect(queryByText('Create new note')).toBeEnabled()
@@ -116,7 +116,7 @@ describe('Explorer', () => {
                 })
 
                 const spy = jest.fn()
-                const { queryByText } = render(<ExplorerScreen navigation={{ navigate: spy }} />)
+                const { queryByText } = render(<Explorer navigation={{ navigate: spy }} />)
 
                 await waitFor(() => {
                     expect(queryByText('Create new note')).toBeEnabled()
@@ -138,7 +138,7 @@ describe('Explorer', () => {
                 ],
             })
 
-            const { queryByText } = render(<ExplorerScreen />)
+            const { queryByText } = render(<Explorer />)
 
             await waitFor(() => expect(queryByText('Stored notes')).toBeTruthy())
         })
@@ -151,7 +151,7 @@ describe('Explorer', () => {
                 ],
             })
 
-            const { queryAllByText } = render(<ExplorerScreen />)
+            const { queryAllByText } = render(<Explorer />)
 
             await waitFor(() => expect(queryAllByText('repeated title')).toHaveLength(2))
         })
@@ -165,7 +165,7 @@ describe('Explorer', () => {
                 notes,
             })
 
-            const { queryByTestId, queryAllByTestId } = render(<ExplorerScreen />)
+            const { queryByTestId, queryAllByTestId } = render(<Explorer />)
 
             await waitFor(() => expect(queryAllByTestId('remove-note')).toHaveLength(2))
 
@@ -182,7 +182,7 @@ describe('Explorer', () => {
                     notes,
                 })
 
-                const { queryByText, queryByTestId } = render(<ExplorerScreen />)
+                const { queryByText, queryByTestId } = render(<Explorer />)
 
                 await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
 
@@ -201,7 +201,7 @@ describe('Explorer', () => {
                         notes,
                     })
 
-                    const { queryByText, queryByTestId } = render(<ExplorerScreen />)
+                    const { queryByText, queryByTestId } = render(<Explorer />)
 
                     await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
                     fireEvent.press(queryByTestId('remove-note'))
@@ -218,7 +218,7 @@ describe('Explorer', () => {
             })
 
             describe('When clicking on the permanently delete button', () => {
-                test('Completely remove stored note', async () => {
+                test('Request note to be erased', async () => {
                     const eraseSpy = jest.fn()
                     NoteClient.erase = eraseSpy
                     const notes = [{ id: '1', title: 'first title' }]
@@ -226,7 +226,7 @@ describe('Explorer', () => {
                         notes,
                     })
 
-                    const { queryByText, queryByTestId } = render(<ExplorerScreen />)
+                    const { queryByTestId } = render(<Explorer />)
 
                     await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
                     fireEvent.press(queryByTestId('remove-note'))
@@ -235,11 +235,117 @@ describe('Explorer', () => {
 
                     fireEvent.press(queryByTestId('remove-box'))
 
-                    await waitFor(() => {
-                        expect(eraseSpy).toHaveBeenCalledWith('1')
-                        expect(queryByText('first title')).not.toBeTruthy()
-                        expect(queryByText("You don't have any saved notes")).toBeTruthy()
-                        expect(queryByText('Create new note')).toBeEnabled()
+                    await waitFor(() => expect(eraseSpy).toHaveBeenCalledWith('1'))
+                })
+
+                describe('Given erase request fails', () => {
+                    test('Show a dialog indicating erase failed', async () => {
+                        NoteClient.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                        const notes = [{ id: '1', title: 'first title' }]
+                        ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                            notes,
+                        })
+
+                        const { queryByText, queryByTestId } = render(<Explorer />)
+
+                        await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
+                        fireEvent.press(queryByTestId('remove-note'))
+
+                        await waitFor(() => expect(queryByTestId('remove-box')).toBeEnabled())
+
+                        fireEvent.press(queryByTestId('remove-box'))
+
+                        await waitFor(() => {
+                            expect(queryByText(`Erasing ${notes[0].title} failed`)).toBeTruthy()
+                            expect(queryByText('Got it')).toBeEnabled()
+                        })
+                    })
+
+                    describe('After closing dialog by hardware button', () => {
+                        test('Render about-to-erase note again', async () => {
+                            NoteClient.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                            const notes = [{ id: '1', title: 'first title' }]
+                            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                                notes,
+                            })
+
+                            const { queryByText, queryByTestId } = render(<Explorer />)
+
+                            await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
+                            fireEvent.press(queryByTestId('remove-note'))
+
+                            await waitFor(() => expect(queryByTestId('remove-box')).toBeEnabled())
+
+                            fireEvent.press(queryByTestId('remove-box'))
+
+                            await waitFor(() => {
+                                expect(queryByText(`Erasing ${notes[0].title} failed`)).toBeTruthy()
+                                expect(queryByText('Got it')).toBeEnabled()
+                            })
+
+                            fireEvent(queryByTestId('erase-failed-view'), 'dismiss')
+
+                            await waitFor(() => {
+                                expect(queryByText(notes[0].title)).toBeTruthy()
+                                expect(queryByText('Undo')).not.toBeTruthy()
+                            })
+                        })
+                    })
+
+                    describe('After closing dialog by dialog button', () => {
+                        test('Render about-to-erase note again', async () => {
+                            NoteClient.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                            const notes = [{ id: '1', title: 'first title' }]
+                            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                                notes,
+                            })
+
+                            const { queryByText, queryByTestId } = render(<Explorer />)
+
+                            await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
+                            fireEvent.press(queryByTestId('remove-note'))
+
+                            await waitFor(() => expect(queryByTestId('remove-box')).toBeEnabled())
+
+                            fireEvent.press(queryByTestId('remove-box'))
+
+                            await waitFor(() => {
+                                expect(queryByText(`Erasing ${notes[0].title} failed`)).toBeTruthy()
+                                expect(queryByText('Got it')).toBeEnabled()
+                            })
+
+                            fireEvent.press(queryByText('Got it'))
+
+                            await waitFor(() => {
+                                expect(queryByText(notes[0].title)).toBeTruthy()
+                                expect(queryByText('Undo')).not.toBeTruthy()
+                            })
+                        })
+                    })
+                })
+
+                describe('Given erase request succeeds', () => {
+                    test('Completely remove stored note', async () => {
+                        NoteClient.erase = jest.fn().mockResolvedValueOnce({})
+                        const notes = [{ id: '1', title: 'first title' }]
+                        ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                            notes,
+                        })
+
+                        const { queryByText, queryByTestId, queryAllByTestId } = render(<Explorer />)
+
+                        await waitFor(() => expect(queryByTestId('remove-note')).toBeTruthy())
+
+                        fireEvent.press(queryByTestId('remove-note'))
+
+                        await waitFor(() => expect(queryByTestId('remove-box')).toBeEnabled())
+
+                        fireEvent.press(queryByTestId('remove-box'))
+
+                        await waitFor(() => {
+                            expect(queryByText('first title')).not.toBeTruthy()
+                            expect(queryAllByTestId(/note-/)).toHaveLength(0)
+                        })
                     })
                 })
             })
@@ -256,7 +362,7 @@ describe('Explorer', () => {
                 })
 
                 const spy = jest.fn()
-                const { queryAllByText } = render(<ExplorerScreen navigation={{ navigate: spy }} />)
+                const { queryAllByText } = render(<Explorer navigation={{ navigate: spy }} />)
 
                 await waitFor(() => expect(queryAllByText('repeated title')).toHaveLength(2))
 
@@ -275,7 +381,7 @@ describe('Explorer', () => {
             })
 
             const spy = jest.fn()
-            const { queryByText } = render(<ExplorerScreen navigation={{ navigate: spy }} />)
+            const { queryByText } = render(<Explorer navigation={{ navigate: spy }} />)
 
             await waitFor(() => expect(queryByText('Create new note')).toBeEnabled())
 
