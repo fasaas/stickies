@@ -18,10 +18,7 @@ jest.spyOn(console, 'warn').mockImplementation()
 
 jest.mock('@expo/vector-icons', () => {
     return {
-        Ionicons: (props: any) => {
-            console.log('Mocked ionicons')
-            return <nativeButton {...props} />
-        },
+        Ionicons: (props: any) => <nativeButton {...props} />,
         FontAwesome: (props: any) => <nativeButton {...props} />,
         AntDesign: (props: any) => <nativeButton {...props} />,
     }
@@ -222,8 +219,8 @@ describe('Explorer', () => {
 
             describe('When clicking on the permanently delete button', () => {
                 test('Completely remove stored note', async () => {
-                    const spy = jest.fn()
-                    NoteClient.erase = spy
+                    const eraseSpy = jest.fn()
+                    NoteClient.erase = eraseSpy
                     const notes = [{ id: '1', title: 'first title' }]
                     ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
                         notes,
@@ -239,7 +236,7 @@ describe('Explorer', () => {
                     fireEvent.press(queryByTestId('remove-box'))
 
                     await waitFor(() => {
-                        expect(spy).toHaveBeenCalledWith('1')
+                        expect(eraseSpy).toHaveBeenCalledWith('1')
                         expect(queryByText('first title')).not.toBeTruthy()
                         expect(queryByText("You don't have any saved notes")).toBeTruthy()
                         expect(queryByText('Create new note')).toBeEnabled()

@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { ActivityIndicator, Button, Pressable, Text, View } from 'react-native'
 import ExplorerClient from '../clients/ExplorerClient'
 import { Ionicons, FontAwesome, AntDesign } from '@expo/vector-icons'
+import NoteClient from '../clients/NoteClient'
 
 enum ExplorerState {
     Idle,
@@ -27,7 +28,8 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
         }
     }
 
-    const remove = async (id: string) => {
+    const erase = async (id: string) => {
+        await NoteClient.erase(id)
         const filteredNotes = notes.filter((note: any) => note.id !== id)
         setNotes(filteredNotes)
     }
@@ -64,9 +66,7 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
                 <View testID='explorer-tree'>
                     <Text>Stored notes</Text>
                     {notes.map((note, index) => {
-                        return (
-                            <ExplorerItem note={note} key={`note-${index}`} navigation={navigation} remove={remove} />
-                        )
+                        return <ExplorerItem note={note} key={`note-${index}`} navigation={navigation} erase={erase} />
                     })}
                     <Button title='Create new note' onPress={() => navigation.navigate('Note')} />
                 </View>
@@ -87,11 +87,11 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
 const ExplorerItem = ({
     note,
     navigation,
-    remove,
+    erase,
 }: {
     note: { id: string; title: string }
     navigation: any
-    remove: Function
+    erase: Function
 }): JSX.Element => {
     const [canShow, show] = useState(true)
     const { id, title } = note
@@ -118,7 +118,13 @@ const ExplorerItem = ({
             ) : (
                 <Fragment>
                     <Button title='Undo' onPress={() => show(true)} />
-                    <AntDesign testID='remove-box' name='close' size={24} color='grey' onPress={() => remove(id)} />
+                    <AntDesign
+                        testID='remove-box'
+                        name='close'
+                        size={24}
+                        color='grey'
+                        onPress={async () => await erase(id)}
+                    />
                 </Fragment>
             )}
         </View>
