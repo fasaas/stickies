@@ -1,5 +1,10 @@
 const getExplorerContent = async () => {
-    return { failed: true }
+    return {
+        notes: [
+            { id: '1', title: 'first title' },
+            { id: '2', title: 'another title' },
+        ],
+    }
 }
 
 export default { getExplorerContent }
