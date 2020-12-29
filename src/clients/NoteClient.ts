@@ -1,8 +1,6 @@
 import { ISection } from '../screens/note/Types'
 
-const save = async (id: string, content: { title: string; sections: ISection[] }) => {
-    return { failed: false }
-}
+const save = async (id: string, content: { title: string; sections: ISection[] }) => {}
 
 const erase = async (id: string) => {}
 
