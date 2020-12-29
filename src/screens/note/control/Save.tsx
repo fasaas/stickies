@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { ActivityIndicator, Button, Modal, Text, View } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import { useDispatch, useNote } from '../context'
-import SaveClient from '../../../clients/NoteClient'
+import NoteCommands from '../../../commands/NoteCommands'
 
 enum SaveStatus {
     Unsaved,
@@ -56,7 +56,7 @@ export const SaveControl = () => {
             disabled={!can.save}
             onPress={async () => {
                 setState(SaveStatus.Saving)
-                const saveResult = await SaveClient.save(id, { title, sections })
+                const saveResult = await NoteCommands.save(id, { title, sections })
                 if (saveResult.failed) {
                     setReasonForSaveFailure(saveResult.failed.reason)
                     setState(SaveStatus.Failed)

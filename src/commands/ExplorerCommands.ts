@@ -1,4 +1,4 @@
-const getExplorerContent = async () => {
+const getItems = async () => {
     return {
         notes: [
             { id: '1', title: 'first title' },
@@ -7,4 +7,4 @@ const getExplorerContent = async () => {
     }
 }
 
-export default { getExplorerContent }
+export default { getItems }

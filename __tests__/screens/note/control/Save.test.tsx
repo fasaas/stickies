@@ -3,7 +3,7 @@ import React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import { SaveControl } from '../../../../src/screens/note/control/Save'
 import * as Context from '../../../../src/screens/note/context'
-import NoteClient from '../../../../src/clients/NoteClient'
+import NoteCommands from '../../../../src/commands/NoteCommands'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'
@@ -24,7 +24,7 @@ describe('Save button', () => {
         })
         jest.spyOn(console, 'warn').mockImplementation()
 
-        NoteClient.save = jest.fn()
+        NoteCommands.save = jest.fn()
     })
 
     describe('When saving', () => {
@@ -54,14 +54,14 @@ describe('Save button', () => {
 
             jest.spyOn(Context, 'useNote').mockImplementation(() => noteState)
             jest.spyOn(Context, 'useDispatch').mockImplementation()
-            NoteClient.save = jest.fn()
+            NoteCommands.save = jest.fn()
 
             const { queryByText } = render(<SaveControl />)
 
             fireEvent.press(queryByText('Save'))
 
             await waitFor(() => {
-                expect(NoteClient.save).toHaveBeenCalledWith(noteState.id, {
+                expect(NoteCommands.save).toHaveBeenCalledWith(noteState.id, {
                     title: noteState.title,
                     sections: noteState.sections,
                 })
@@ -79,7 +79,7 @@ describe('Save button', () => {
 
                 jest.spyOn(Context, 'useNote').mockImplementation(() => noteState)
                 jest.spyOn(Context, 'useDispatch').mockImplementation()
-                jest.spyOn(NoteClient, 'save').mockResolvedValueOnce({ failed: { reason: 'any reason' } })
+                jest.spyOn(NoteCommands, 'save').mockResolvedValueOnce({ failed: { reason: 'any reason' } })
 
                 const { queryByText } = render(<SaveControl />)
 
@@ -103,7 +103,7 @@ describe('Save button', () => {
 
                     jest.spyOn(Context, 'useNote').mockImplementation(() => noteState)
                     jest.spyOn(Context, 'useDispatch').mockImplementation()
-                    jest.spyOn(NoteClient, 'save').mockResolvedValueOnce({ failed: true })
+                    jest.spyOn(NoteCommands, 'save').mockResolvedValueOnce({ failed: true })
 
                     const { queryByText, queryByTestId } = render(<SaveControl />)
 
@@ -133,7 +133,7 @@ describe('Save button', () => {
 
                     jest.spyOn(Context, 'useNote').mockImplementation(() => noteState)
                     jest.spyOn(Context, 'useDispatch').mockImplementation()
-                    jest.spyOn(NoteClient, 'save').mockResolvedValueOnce({ failed: true })
+                    jest.spyOn(NoteCommands, 'save').mockResolvedValueOnce({ failed: true })
 
                     const { queryByText, queryByTestId } = render(<SaveControl />)
 
@@ -164,7 +164,7 @@ describe('Save button', () => {
 
                 jest.spyOn(Context, 'useNote').mockImplementation(() => noteState)
                 jest.spyOn(Context, 'useDispatch').mockImplementation()
-                jest.spyOn(NoteClient, 'save').mockResolvedValueOnce({ failed: false })
+                jest.spyOn(NoteCommands, 'save').mockResolvedValueOnce({ failed: false })
 
                 const { queryByText, queryByTestId } = render(<SaveControl />)
 
@@ -198,7 +198,7 @@ describe('Save button', () => {
                         .mockImplementationOnce(() => enabledState)
                         .mockImplementationOnce(() => disabledState)
                     jest.spyOn(Context, 'useDispatch').mockImplementation(() => () => {})
-                    jest.spyOn(NoteClient, 'save').mockResolvedValueOnce({ failed: false })
+                    jest.spyOn(NoteCommands, 'save').mockResolvedValueOnce({ failed: false })
 
                     const { queryByText } = render(<SaveControl />)
 

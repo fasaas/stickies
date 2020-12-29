@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Button, Text, View } from 'react-native'
-import ExplorerClient from '../../clients/ExplorerClient'
+import ExplorerCommands from '../../commands/ExplorerCommands'
 import { Ionicons } from '@expo/vector-icons'
-import NoteClient from '../../clients/NoteClient'
+import NoteCommands from '../../commands/NoteCommands'
 import { ExplorerItem } from './ExplorerItem'
 
 enum ExplorerState {
@@ -18,7 +18,7 @@ export const Explorer = ({ navigation }: { navigation: any }) => {
 
     const effect = async () => {
         setState(ExplorerState.Pending)
-        const result = await ExplorerClient.getExplorerContent()
+        const result = await ExplorerCommands.getItems()
         if (result.failed) {
             setState(ExplorerState.Rejected)
         }
@@ -30,7 +30,7 @@ export const Explorer = ({ navigation }: { navigation: any }) => {
     }
 
     const erase = async (id: string) => {
-        const result = await NoteClient.erase(id)
+        const result = await NoteCommands.erase(id)
         if (result.failed) return true
 
         const filteredNotes = notes.filter((note: any) => note.id !== id)

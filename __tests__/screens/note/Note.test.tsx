@@ -3,7 +3,7 @@ import React from 'react'
 import { fireEvent, render, waitFor, within } from '@testing-library/react-native'
 import Note from '../../../src/screens/note'
 import { ISection } from '../../../src/screens/note/Types'
-import NoteClient from '../../../src/clients/NoteClient'
+import NoteCommands from '../../../src/commands/NoteCommands'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'
@@ -170,7 +170,7 @@ describe('Note', () => {
             })
 
             test('After clicking on save button', async () => {
-                NoteClient.save = jest.fn().mockResolvedValueOnce({})
+                NoteCommands.save = jest.fn().mockResolvedValueOnce({})
                 const { queryByText, queryByDisplayValue } = render(<Note title='title' />)
 
                 fireEvent.changeText(queryByDisplayValue('title'), 'another title')
@@ -263,7 +263,7 @@ describe('Note', () => {
             })
 
             test('After clicking on save button', async () => {
-                NoteClient.save = jest.fn().mockResolvedValueOnce({})
+                NoteCommands.save = jest.fn().mockResolvedValueOnce({})
                 const { queryByText, queryByDisplayValue } = render(<Note title='title' />)
 
                 fireEvent.changeText(queryByDisplayValue('title'), 'another title')
@@ -373,7 +373,7 @@ describe('Note', () => {
         describe('Given any note', () => {
             describe('When successfully saving updated note', () => {
                 beforeEach(() => {
-                    NoteClient.save = jest.fn().mockResolvedValue({ failed: false })
+                    NoteCommands.save = jest.fn().mockResolvedValue({ failed: false })
                 })
 
                 describe('When resetting unsaved content', () => {

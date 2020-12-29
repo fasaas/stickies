@@ -2,9 +2,9 @@ import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { cleanup, fireEvent, render, waitFor, within } from '@testing-library/react-native'
 import { Explorer } from '../../../src/screens/explorer'
-import ExplorerClient from '../../../src/clients/ExplorerClient'
+import ExplorerCommands from '../../../src/commands/ExplorerCommands'
 import { Button as nativeButton } from 'react-native'
-import NoteClient from '../../../src/clients/NoteClient'
+import NoteCommands from '../../../src/commands/NoteCommands'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'
@@ -28,7 +28,7 @@ describe('Explorer', () => {
     beforeEach(() => {
         cleanup()
         jest.resetAllMocks()
-        ExplorerClient.getExplorerContent = jest.fn()
+        ExplorerCommands.getItems = jest.fn()
     })
 
     test('Renders a loading indicator while fetching notes', async () => {
@@ -40,19 +40,19 @@ describe('Explorer', () => {
     test('Calls explorer client to fetch notes', async () => {
         render(<Explorer />)
 
-        await waitFor(() => expect(ExplorerClient.getExplorerContent).toHaveBeenCalled())
+        await waitFor(() => expect(ExplorerCommands.getItems).toHaveBeenCalled())
     })
 
     describe('Given explorer client fails to fetch notes', () => {
         test('Render a message explaining inability to fetch notes', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({ failed: true })
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({ failed: true })
             const { queryByText } = render(<Explorer />)
 
             await waitFor(() => expect(queryByText('Unable to retrieve notes')).toBeTruthy())
         })
 
         test('Render a refresh button to hint a retry by pressing it', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({ failed: true })
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({ failed: true })
             const { queryByTestId } = render(<Explorer />)
 
             await waitFor(() => expect(queryByTestId('retry-fetching-notes')).toBeTruthy())
@@ -60,18 +60,18 @@ describe('Explorer', () => {
 
         describe('When clicking on refresh button', () => {
             test('Calls explorer again client to fetch notes', async () => {
-                ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({ failed: true })
+                ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({ failed: true })
                 const { queryByTestId } = render(<Explorer />)
 
                 await waitFor(() => expect(queryByTestId('retry-fetching-notes')).toBeTruthy())
 
                 fireEvent.press(queryByTestId('retry-fetching-notes'))
 
-                expect(ExplorerClient.getExplorerContent).toHaveBeenCalledTimes(2)
+                expect(ExplorerCommands.getItems).toHaveBeenCalledTimes(2)
             })
 
             test('Renders again a loading indicator while fetching notes', async () => {
-                ExplorerClient.getExplorerContent = jest.fn().mockResolvedValue({ failed: true })
+                ExplorerCommands.getItems = jest.fn().mockResolvedValue({ failed: true })
 
                 const { queryByTestId } = render(<Explorer />)
 
@@ -86,7 +86,7 @@ describe('Explorer', () => {
 
     describe('Given user has no stored notes', () => {
         test('Render a message indicating user has no notes', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                 notes: [],
             })
 
@@ -98,7 +98,7 @@ describe('Explorer', () => {
         })
 
         test('Render a button to create a new note in notes screen', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                 notes: [],
             })
 
@@ -111,7 +111,7 @@ describe('Explorer', () => {
 
         describe('When clicking on create new note button', () => {
             test('Navigates to note screen', async () => {
-                ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                     notes: [],
                 })
 
@@ -131,7 +131,7 @@ describe('Explorer', () => {
 
     describe('Given user has stored notes', () => {
         test('Render a heading', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                 notes: [
                     { id: '1', title: 'repeated title' },
                     { id: '2', title: 'repeated title' },
@@ -144,7 +144,7 @@ describe('Explorer', () => {
         })
 
         test('Render each note title', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                 notes: [
                     { id: '1', title: 'repeated title' },
                     { id: '2', title: 'repeated title' },
@@ -161,7 +161,7 @@ describe('Explorer', () => {
                 { id: '1', title: 'first title' },
                 { id: '2', title: 'second title' },
             ]
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                 notes,
             })
 
@@ -178,7 +178,7 @@ describe('Explorer', () => {
         describe('When clicking on the remove icon', () => {
             test('Render an Undo step before completely removing the note', async () => {
                 const notes = [{ id: '1', title: 'first title' }]
-                ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                     notes,
                 })
 
@@ -197,7 +197,7 @@ describe('Explorer', () => {
             describe('When clicking on the Undo button', () => {
                 test('Render stored note again', async () => {
                     const notes = [{ id: '1', title: 'first title' }]
-                    ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                    ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                         notes,
                     })
 
@@ -220,9 +220,9 @@ describe('Explorer', () => {
             describe('When clicking on the permanently delete button', () => {
                 test('Request note to be erased', async () => {
                     const eraseSpy = jest.fn()
-                    NoteClient.erase = eraseSpy
+                    NoteCommands.erase = eraseSpy
                     const notes = [{ id: '1', title: 'first title' }]
-                    ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                    ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                         notes,
                     })
 
@@ -240,9 +240,9 @@ describe('Explorer', () => {
 
                 describe('Given erase request fails', () => {
                     test('Show a dialog indicating erase failed', async () => {
-                        NoteClient.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                        NoteCommands.erase = jest.fn().mockResolvedValueOnce({ failed: true })
                         const notes = [{ id: '1', title: 'first title' }]
-                        ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                        ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                             notes,
                         })
 
@@ -263,9 +263,9 @@ describe('Explorer', () => {
 
                     describe('After closing dialog by hardware button', () => {
                         test('Render about-to-erase note again', async () => {
-                            NoteClient.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                            NoteCommands.erase = jest.fn().mockResolvedValueOnce({ failed: true })
                             const notes = [{ id: '1', title: 'first title' }]
-                            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                                 notes,
                             })
 
@@ -294,9 +294,9 @@ describe('Explorer', () => {
 
                     describe('After closing dialog by dialog button', () => {
                         test('Render about-to-erase note again', async () => {
-                            NoteClient.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                            NoteCommands.erase = jest.fn().mockResolvedValueOnce({ failed: true })
                             const notes = [{ id: '1', title: 'first title' }]
-                            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                                 notes,
                             })
 
@@ -326,9 +326,9 @@ describe('Explorer', () => {
 
                 describe('Given erase request succeeds', () => {
                     test('Completely remove stored note', async () => {
-                        NoteClient.erase = jest.fn().mockResolvedValueOnce({})
+                        NoteCommands.erase = jest.fn().mockResolvedValueOnce({})
                         const notes = [{ id: '1', title: 'first title' }]
-                        ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                        ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                             notes,
                         })
 
@@ -357,7 +357,7 @@ describe('Explorer', () => {
                     { id: '1', title: 'repeated title' },
                     { id: '2', title: 'repeated title' },
                 ]
-                ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+                ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                     notes,
                 })
 
@@ -373,7 +373,7 @@ describe('Explorer', () => {
         })
 
         test('Render a button to create a new note in notes screen', async () => {
-            ExplorerClient.getExplorerContent = jest.fn().mockResolvedValueOnce({
+            ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
                 notes: [
                     { id: '1', title: 'repeated title' },
                     { id: '2', title: 'repeated title' },
