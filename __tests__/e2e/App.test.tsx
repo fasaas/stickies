@@ -153,8 +153,11 @@ describe('I as the customer', () => {
             const ExplorerView = within(App.queryByTestId('explorer-tree'))
 
             await waitFor(() => expect(ExplorerView.queryByText('Any title')).toBeTruthy())
-            // App.debug()
         })
+    })
+
+    describe('Given I want to delete a created note', () => {
+        test('I should first have a note', async () => {})
     })
 })
 
