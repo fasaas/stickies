@@ -1,6 +1,6 @@
-import AsyncStorageClient from '../../src/clients/AsyncStorageClient'
-import ExplorerCommands from '../../src/commands/ExplorerCommands'
-import { NOTE_PREFIX } from '../../src/constants'
+import AsyncStorageClient from '../../../src/clients/AsyncStorageClient'
+import ExplorerCommands from '../../../src/commands/ExplorerCommands'
+import { NOTE_PREFIX } from '../../../src/constants'
 
 describe('Explorer commands', () => {
     describe('Get Items', () => {

@@ -27,22 +27,20 @@ export const SaveControl = () => {
 
     if (state === SaveStatus.Failed) {
         return (
-            <View>
-                <Modal
-                    testID='failed-view'
-                    visible={state === SaveStatus.Failed}
-                    onDismiss={() => {
-                        setReasonForSaveFailure('')
-                        setState(SaveStatus.Unsaved)
-                    }}
-                >
-                    <View>
-                        <Text>Saving failed</Text>
-                        <Text>{reasonForSaveFailure}</Text>
-                        <Button title='Got it' onPress={() => setState(SaveStatus.Unsaved)} />
-                    </View>
-                </Modal>
-            </View>
+            <Modal
+                testID='failed-view'
+                visible={state === SaveStatus.Failed}
+                onDismiss={() => {
+                    setReasonForSaveFailure('')
+                    setState(SaveStatus.Unsaved)
+                }}
+            >
+                <View>
+                    <Text>Saving failed</Text>
+                    <Text>{reasonForSaveFailure}</Text>
+                    <Button title='Got it' onPress={() => setState(SaveStatus.Unsaved)} />
+                </View>
+            </Modal>
         )
     }
 

@@ -9,6 +9,7 @@ const init = ({ id, title, sections }: { id?: string; title?: string; sections?:
     const initialTitle = title || ''
     const initialSections = sections || defaultSections
     const initialId = id || `note-${Date.now().toString()}`
+
     return {
         id: initialId,
         title: initialTitle,
@@ -97,7 +98,7 @@ const noteReducer = (state: State, action: Action): State => {
             const thereIsTitle = event.title.trim().length > 0
 
             const canSave = canReset && thereAreSections && thereIsTitle
-            return { sections, title: event.title, initial, can: { save: canSave, reset: canReset } }
+            return { id: state.id, sections, title: event.title, initial, can: { save: canSave, reset: canReset } }
         }
 
         default: {

@@ -11,7 +11,7 @@ export const Note = () => {
     const { sections, title } = useNote()
     const dispatch = useDispatch()
     return (
-        <View key='note-view'>
+        <View key='note-view' testID='note-view'>
             <View key='title-view'>
                 <TextInput
                     placeholder='Note title'

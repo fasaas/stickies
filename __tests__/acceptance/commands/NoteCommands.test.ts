@@ -1,6 +1,6 @@
-import AsyncStorageClient from '../../src/clients/AsyncStorageClient'
-import NoteCommands from '../../src/commands/NoteCommands'
-import { NOTE_PREFIX } from '../../src/constants'
+import AsyncStorageClient from '../../../src/clients/AsyncStorageClient'
+import NoteCommands from '../../../src/commands/NoteCommands'
+import { NOTE_PREFIX } from '../../../src/constants'
 
 describe('Note commands', () => {
     beforeEach(() => jest.restoreAllMocks())
@@ -58,7 +58,7 @@ describe('Note commands', () => {
 
                 expect(AsyncStorageClient.createOrUpdate).toHaveBeenCalledWith(
                     `${NOTE_PREFIX}validId`,
-                    JSON.stringify(content)
+                    JSON.stringify({ ...content, id: 'validId' })
                 )
             })
 

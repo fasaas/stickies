@@ -1,9 +1,9 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { fireEvent, render, waitFor, within } from '@testing-library/react-native'
-import Note from '../../../src/screens/note'
-import { ISection } from '../../../src/screens/note/Types'
-import NoteCommands from '../../../src/commands/NoteCommands'
+import Note from '../../../../src/screens/note'
+import { ISection } from '../../../../src/screens/note/Types'
+import NoteCommands from '../../../../src/commands/NoteCommands'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'

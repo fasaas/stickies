@@ -14,8 +14,9 @@ export const ExplorerItem = ({
     const [canShow, show] = useState(true)
     const [onError, setOnError] = useState(false)
     const { id, title } = note
+
     return (
-        <View testID={`note-${id}`}>
+        <View testID={id}>
             {canShow ? (
                 <Fragment>
                     <FontAwesome
@@ -51,25 +52,26 @@ export const ExplorerItem = ({
                     />
                 </Fragment>
             )}
-            <Modal
-                testID='erase-failed-view'
-                visible={onError}
-                onDismiss={() => {
-                    show(true)
-                    setOnError(false)
-                }}
-            >
-                <View>
-                    <Text>{`Erasing ${title} failed`}</Text>
-                    <Button
-                        title='Got it'
-                        onPress={() => {
-                            show(true)
-                            setOnError(false)
-                        }}
-                    />
-                </View>
-            </Modal>
+            {onError ? (
+                <Modal
+                    testID='erase-failed-view'
+                    onDismiss={() => {
+                        setOnError(false)
+                        show(true)
+                    }}
+                >
+                    <View>
+                        <Text>{`Erasing ${title} failed`}</Text>
+                        <Button
+                            title='Got it'
+                            onPress={() => {
+                                setOnError(false)
+                                show(true)
+                            }}
+                        />
+                    </View>
+                </Modal>
+            ) : null}
         </View>
     )
 }

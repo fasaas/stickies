@@ -1,10 +1,10 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { cleanup, fireEvent, render, waitFor, within } from '@testing-library/react-native'
-import { Explorer } from '../../../src/screens/explorer'
-import ExplorerCommands from '../../../src/commands/ExplorerCommands'
+import { Explorer } from '../../../../src/screens/explorer'
+import ExplorerCommands from '../../../../src/commands/ExplorerCommands'
 import { Button as nativeButton } from 'react-native'
-import NoteCommands from '../../../src/commands/NoteCommands'
+import NoteCommands from '../../../../src/commands/NoteCommands'
 
 const errorToSilence =
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);'
@@ -169,7 +169,7 @@ describe('Explorer', () => {
 
             await waitFor(() => expect(queryAllByTestId('remove-note')).toHaveLength(2))
 
-            const withins = notes.map((note) => within(queryByTestId(`note-${note.id}`)))
+            const withins = notes.map((note) => within(queryByTestId(note.id)))
             await waitFor(() =>
                 withins.forEach((within) => expect(within.queryAllByTestId('remove-note')).toHaveLength(1))
             )

@@ -31,7 +31,7 @@ export const Explorer = ({ navigation }: { navigation: any }) => {
 
     const erase = async (id: string) => {
         const result = await NoteCommands.erase(id)
-        if (result.failed) return true
+        if (result.failed) return !!result.failed
 
         const filteredNotes = notes.filter((note: any) => note.id !== id)
         setNotes(filteredNotes)

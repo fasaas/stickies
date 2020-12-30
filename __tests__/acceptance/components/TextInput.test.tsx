@@ -1,7 +1,7 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import { TextInput } from '../../src/components/TextInput'
+import { TextInput } from '../../../src/components/TextInput'
 
 jest.spyOn(console, 'warn').mockImplementation()
 

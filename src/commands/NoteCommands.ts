@@ -21,7 +21,7 @@ const save = async (id: string, content: { title: string; sections: ISection[] }
 
     let stringifiedContent = ''
     try {
-        stringifiedContent = JSON.stringify(content)
+        stringifiedContent = JSON.stringify({ ...content, id })
     } catch (e) {
         return { failed: { reason: `Content is not stringifiable: ${e.message || e}` } }
     }

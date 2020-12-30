@@ -1,7 +1,7 @@
 import '@testing-library/jest-native/extend-expect'
 import React from 'react'
 import { fireEvent, render } from '@testing-library/react-native'
-import Note from '../../../../src/screens/note'
+import Note from '../../../../../src/screens/note'
 
 jest.spyOn(console, 'warn').mockImplementation()
 
