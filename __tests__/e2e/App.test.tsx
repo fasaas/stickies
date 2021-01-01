@@ -1,12 +1,10 @@
 import '@testing-library/jest-native/extend-expect'
-import { cleanup, fireEvent, render, RenderAPI, waitFor, within } from '@testing-library/react-native'
+import { fireEvent, render, RenderAPI, waitFor, within } from '@testing-library/react-native'
 import React from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import App from '../../src/App'
-import AsyncStorageClient from '../../src/clients/AsyncStorageClient'
 import AppCommands from '../../src/commands/AppCommands'
-import NoteCommands from '../../src/commands/NoteCommands'
 
 const initialMetrics = {
     frame: { x: 0, y: 0, width: 0, height: 0 },
@@ -90,7 +88,7 @@ describe('I as the customer', () => {
 
     describe('Given I already have a created note', () => {
         beforeEach(async () => {
-            await NoteCommands.save('id1', {
+            await AppCommands.save('id1', {
                 title: 'id1 title',
                 sections: [
                     {
