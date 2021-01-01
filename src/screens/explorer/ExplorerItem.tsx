@@ -1,19 +1,20 @@
 import React, { Fragment, useState } from 'react'
 import { Button, Modal, Pressable, Text, View } from 'react-native'
 import { FontAwesome, AntDesign } from '@expo/vector-icons'
+import { ISection } from '../note/Types'
 
 export const ExplorerItem = ({
     note,
     navigation,
     erase,
 }: {
-    note: { id: string; title: string }
+    note: { id: string; title: string; sections: ISection[] }
     navigation: any
     erase: Function
 }): JSX.Element => {
     const [canShow, show] = useState(true)
     const [onError, setOnError] = useState(false)
-    const { id, title } = note
+    const { id, title, sections } = note
 
     return (
         <View testID={id}>
@@ -29,7 +30,7 @@ export const ExplorerItem = ({
                     <Pressable
                         style={{ backgroundColor: 'lightblue' }}
                         onPress={() => {
-                            navigation.navigate('Note', { id })
+                            navigation.navigate('Note', { id, title, sections })
                         }}
                     >
                         <Text>{title}</Text>

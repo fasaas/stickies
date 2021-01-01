@@ -2,6 +2,7 @@ import { useReducer } from 'react'
 import { ISection, State, Action } from '../Types'
 
 const init = ({ id, title, sections }: { id?: string; title?: string; sections?: ISection[] }): State => {
+    console.log('TCL: { id, title, sections }', { id, title, sections })
     const defaultSections: ISection[] = [
         { type: '@native/translation', name: 'Translation', id: Date.now().toString(), props: { from: '', to: '' } },
     ]

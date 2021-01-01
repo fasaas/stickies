@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Explorer } from './explorer'
 
 export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
+    console.log('TCL: ExplorerScreen -> navigation', navigation)
     return (
         <SafeAreaView>
             <Explorer navigation={navigation} />

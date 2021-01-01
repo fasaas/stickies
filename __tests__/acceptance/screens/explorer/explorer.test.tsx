@@ -221,9 +221,8 @@ describe('Explorer', () => {
                 test('Request note to be erased', async () => {
                     const eraseSpy = jest.fn()
                     NoteCommands.erase = eraseSpy
-                    const notes = [{ id: '1', title: 'first title' }]
                     ExplorerCommands.getItems = jest.fn().mockResolvedValueOnce({
-                        notes,
+                        notes: [{ id: '1', title: 'first title' }],
                     })
 
                     const { queryByTestId } = render(<Explorer />)

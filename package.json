@@ -6,6 +6,8 @@
         "ios": "expo start --ios",
         "web": "expo start --web",
         "eject": "expo eject",
+        "test": "jest",
+        "t": "jest",
         "w": "jest --watch",
         "t:a": "jest -c jest.acceptance.config.js",
         "t:e": "jest -c jest.e2e.config.js",

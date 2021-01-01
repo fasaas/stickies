@@ -4,6 +4,9 @@ import React from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import App from '../../src/App'
+import AsyncStorageClient from '../../src/clients/AsyncStorageClient'
+import AppCommands from '../../src/commands/AppCommands'
+import NoteCommands from '../../src/commands/NoteCommands'
 
 const initialMetrics = {
     frame: { x: 0, y: 0, width: 0, height: 0 },
@@ -19,22 +22,13 @@ const TestApp = () => {
 
 describe('I as the customer', () => {
     let App: RenderAPI
+    beforeEach(() => (App = render(<TestApp />)))
+    afterEach(async () => await AsyncStorage.clear())
 
-    beforeEach(() => {
-        App = render(<TestApp />)
-    })
-
-    afterEach(async () => {
-        cleanup()
-        await AsyncStorage.clear()
-    })
-
-    xtest('Renders', () => {
-        App.debug()
-    })
+    xtest('Renders', () => App.debug())
 
     test('I see a loading animation that hints the app is loading stored notes', () => {
-        expect(App.queryByTestId('loading-stored-notes'))
+        expect(App.queryByTestId('loading-app'))
     })
 
     describe('When the loading animation stops', () => {
@@ -53,7 +47,7 @@ describe('I as the customer', () => {
         })
     })
 
-    xdescribe("Given I'm in Explorer (default) tab", () => {
+    describe("Given I'm in Explorer (default) tab", () => {
         test('I can see a Create new note button', async () => {
             await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
         })
@@ -89,6 +83,37 @@ describe('I as the customer', () => {
                 await waitFor(() => {
                     expect(ExplorerTab.queryByA11yState({ selected: false }))
                     expect(NoteTab.queryByA11yState({ selected: true }))
+                })
+            })
+        })
+    })
+
+    describe('Given I already have a created note', () => {
+        beforeEach(async () => {
+            await NoteCommands.save('id1', {
+                title: 'id1 title',
+                sections: [
+                    {
+                        type: '@native/translation',
+                        name: 'Translation',
+                        id: Date.now().toString(),
+                        props: { from: 'From value', to: 'To value' },
+                    },
+                ],
+            })
+
+            App = render(<TestApp />)
+        })
+
+        describe('When I click on that note', () => {
+            test('I see the content in detail inside the Note tab', async () => {
+                await waitFor(() => expect(App.queryByText('id1 title')).toBeTruthy())
+
+                fireEvent.press(App.queryByText('id1 title'))
+
+                await waitFor(() => {
+                    expect(App.queryByText('From value')).toBeTruthy()
+                    expect(App.queryByText('To value')).toBeTruthy()
                 })
             })
         })
@@ -161,7 +186,7 @@ describe('I as the customer', () => {
         })
     })
 
-    describe('Given I want to delete a created note', () => {
+    xdescribe('Given I want to delete a created note', () => {
         test('I should first have a note', async () => {})
     })
 })
