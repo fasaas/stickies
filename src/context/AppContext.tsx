@@ -18,7 +18,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const effect = async () => {
         setState(AppState.Pending)
-        const result = await AppCommands.getItems()
+        const result = await AppCommands.getAllNotes()
         if (result.failed) {
             setState(AppState.Rejected)
         } else {

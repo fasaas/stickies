@@ -1,13 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import '@testing-library/jest-native/extend-expect'
-import { cleanup, fireEvent, render, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react-native'
+import {
+    cleanup,
+    fireEvent,
+    render,
+    waitFor,
+    waitForElementToBeRemoved,
+    within,
+} from '@testing-library/react-native'
 import React from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import App from '../../src/App'
 import { Button as nativeButton } from 'react-native'
-import AsyncStorageClient from '../../src/clients/AsyncStorageClient'
 import AppCommands from '../../src/commands/AppCommands'
-import NoteCommands from '../../src/commands/NoteCommands'
 
 jest.mock('@expo/vector-icons', () => {
     return {
@@ -34,26 +39,31 @@ describe('App', () => {
     beforeEach(cleanup)
     afterEach(async () => await AsyncStorage.clear())
 
+    test('Show a loading indicator before app is fully loaded', async () => {
+        AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ failed: true })
+        const App = render(<TestApp />)
+
+        expect(App.queryByTestId('loading-app')).toBeTruthy()
+    })
+
     describe('When requesting for notes', () => {
         describe('Given request rejects', () => {
             test('Show a retry button', async () => {
-                AppCommands.getItems = jest.fn().mockResolvedValueOnce({ failed: true })
+                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ failed: true })
                 const App = render(<TestApp />)
 
                 await waitForElementToBeRemoved(() => App.queryByTestId('loading-app'))
-
                 await waitFor(() => expect(App.queryByTestId('app-retry')).toBeTruthy())
             })
 
             describe('When clicking on retry button', () => {
                 test('Show bottom tabs if new request resolves', async () => {
-                    AppCommands.getItems = jest
+                    AppCommands.getAllNotes = jest
                         .fn()
                         .mockResolvedValueOnce({ failed: true })
                         .mockResolvedValueOnce({ notes: [] })
                     const App = render(<TestApp />)
 
-                    await waitForElementToBeRemoved(() => App.queryByTestId('loading-app'))
                     await waitFor(() => expect(App.queryByTestId('app-retry')).toBeTruthy())
 
                     fireEvent.press(App.queryByTestId('app-retry'))
@@ -68,7 +78,7 @@ describe('App', () => {
 
         describe('Given request resolves', () => {
             test('Show bottom tabs', async () => {
-                AppCommands.getItems = jest.fn().mockResolvedValueOnce({ notes: [] })
+                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ notes: [] })
                 const App = render(<TestApp />)
 
                 await waitFor(() => {
@@ -80,14 +90,16 @@ describe('App', () => {
 
         describe('Given request resolves with empty notes', () => {
             test('Indicate user has no notes', async () => {
-                AppCommands.getItems = jest.fn().mockResolvedValueOnce({ notes: [] })
+                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ notes: [] })
                 const App = render(<TestApp />)
 
-                await waitFor(() => expect(App.queryByText("You don't have any saved notes")).toBeEnabled())
+                await waitFor(() =>
+                    expect(App.queryByText("You don't have any saved notes")).toBeEnabled()
+                )
             })
 
             test('Show a create new note button', async () => {
-                AppCommands.getItems = jest.fn().mockResolvedValueOnce({ notes: [] })
+                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ notes: [] })
                 const App = render(<TestApp />)
 
                 await waitFor(() => expect(App.queryByText('Create new note')).toBeEnabled())
@@ -96,7 +108,7 @@ describe('App', () => {
 
         describe('Given request resolves with notes', () => {
             test('Render a heading', async () => {
-                AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                     notes: [
                         { id: '1', title: 'repeated title' },
                         { id: '2', title: 'repeated title' },
@@ -109,7 +121,7 @@ describe('App', () => {
             })
 
             test('Show a create new note button', async () => {
-                AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                     notes: [
                         { id: '1', title: 'repeated title' },
                         { id: '2', title: 'repeated title' },
@@ -123,7 +135,7 @@ describe('App', () => {
 
             describe('When rendering all notes', () => {
                 test('Render each note title', async () => {
-                    AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                    AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                         notes: [
                             { id: '1', title: 'repeated title' },
                             { id: '2', title: 'repeated title' },
@@ -132,7 +144,9 @@ describe('App', () => {
 
                     const App = render(<TestApp />)
 
-                    await waitFor(() => expect(App.queryAllByText('repeated title')).toHaveLength(2))
+                    await waitFor(() =>
+                        expect(App.queryAllByText('repeated title')).toHaveLength(2)
+                    )
                 })
 
                 test('Render a remove icon with each note tile', async () => {
@@ -140,7 +154,7 @@ describe('App', () => {
                         { id: '1', title: 'first title' },
                         { id: '2', title: 'second title' },
                     ]
-                    AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                    AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                         notes,
                     })
 
@@ -150,13 +164,15 @@ describe('App', () => {
 
                     const withins = notes.map((note) => within(App.queryByTestId(note.id)))
                     await waitFor(() =>
-                        withins.forEach((within) => expect(within.queryAllByTestId('remove-note')).toHaveLength(1))
+                        withins.forEach((within) =>
+                            expect(within.queryAllByTestId('remove-note')).toHaveLength(1)
+                        )
                     )
                 })
 
                 describe('When clicking on the remove icon', () => {
                     test('Render an Undo step before completely removing the note', async () => {
-                        AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                        AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                             notes: [{ id: '1', title: 'first title' }],
                         })
 
@@ -174,13 +190,15 @@ describe('App', () => {
 
                     describe('When clicking on the Undo button', () => {
                         test('Render stored note again', async () => {
-                            AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                            AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                 notes: [{ id: '1', title: 'first title' }],
                             })
 
                             const App = render(<TestApp />)
 
-                            await waitFor(() => expect(App.queryByTestId('remove-note')).toBeTruthy())
+                            await waitFor(() =>
+                                expect(App.queryByTestId('remove-note')).toBeTruthy()
+                            )
                             fireEvent.press(App.queryByTestId('remove-note'))
 
                             await waitFor(() => expect(App.queryByText('Undo')).toBeEnabled())
@@ -197,46 +215,62 @@ describe('App', () => {
                     describe('When clicking on the permanently delete button', () => {
                         describe('Given erase request fails', () => {
                             test('Show a dialog indicating erase failed', async () => {
-                                NoteCommands.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                                NoteCommands.erase = jest
+                                    .fn()
+                                    .mockResolvedValueOnce({ failed: true })
                                 const note = { id: '1', title: 'first title' }
-                                AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                     notes: [note],
                                 })
 
                                 const App = render(<TestApp />)
 
-                                await waitFor(() => expect(App.queryByTestId('remove-note')).toBeTruthy())
+                                await waitFor(() =>
+                                    expect(App.queryByTestId('remove-note')).toBeTruthy()
+                                )
                                 fireEvent.press(App.queryByTestId('remove-note'))
 
-                                await waitFor(() => expect(App.queryByTestId('remove-box')).toBeEnabled())
+                                await waitFor(() =>
+                                    expect(App.queryByTestId('remove-box')).toBeEnabled()
+                                )
 
                                 fireEvent.press(App.queryByTestId('remove-box'))
 
                                 await waitFor(() => {
-                                    expect(App.queryByText(`Erasing ${note.title} failed`)).toBeTruthy()
+                                    expect(
+                                        App.queryByText(`Erasing ${note.title} failed`)
+                                    ).toBeTruthy()
                                     expect(App.queryByText('Got it')).toBeEnabled()
                                 })
                             })
 
                             describe('After closing dialog by hardware button', () => {
                                 test('Render about-to-erase note again', async () => {
-                                    NoteCommands.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                                    NoteCommands.erase = jest
+                                        .fn()
+                                        .mockResolvedValueOnce({ failed: true })
                                     const note = { id: '1', title: 'first title' }
-                                    AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                                    AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                         notes: [note],
                                     })
 
                                     const App = render(<TestApp />)
 
-                                    await waitFor(() => expect(App.queryByTestId('remove-note')).toBeTruthy())
+                                    await waitFor(() =>
+                                        expect(App.queryByTestId('remove-note')).toBeTruthy()
+                                    )
                                     fireEvent.press(App.queryByTestId('remove-note'))
 
-                                    await waitFor(() => expect(App.queryByTestId('remove-box')).toBeEnabled())
+                                    await waitFor(() =>
+                                        expect(App.queryByTestId('remove-box')).toBeEnabled()
+                                    )
 
                                     fireEvent.press(App.queryByTestId('remove-box'))
 
                                     await waitFor(() => {
-                                        expect(App.queryByText(`Erasing ${note.title} failed`)).toBeTruthy()
+                                        expect(
+                                            App.queryByText(`Erasing ${note.title} failed`)
+                                        ).toBeTruthy()
                                         expect(App.queryByText('Got it')).toBeEnabled()
                                     })
 
@@ -251,23 +285,31 @@ describe('App', () => {
 
                             describe('After closing dialog by dialog button', () => {
                                 test('Render about-to-erase note again', async () => {
-                                    NoteCommands.erase = jest.fn().mockResolvedValueOnce({ failed: true })
+                                    NoteCommands.erase = jest
+                                        .fn()
+                                        .mockResolvedValueOnce({ failed: true })
                                     const note = { id: '1', title: 'first title' }
-                                    AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                                    AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                         notes: [note],
                                     })
 
                                     const App = render(<TestApp />)
 
-                                    await waitFor(() => expect(App.queryByTestId('remove-note')).toBeTruthy())
+                                    await waitFor(() =>
+                                        expect(App.queryByTestId('remove-note')).toBeTruthy()
+                                    )
                                     fireEvent.press(App.queryByTestId('remove-note'))
 
-                                    await waitFor(() => expect(App.queryByTestId('remove-box')).toBeEnabled())
+                                    await waitFor(() =>
+                                        expect(App.queryByTestId('remove-box')).toBeEnabled()
+                                    )
 
                                     fireEvent.press(App.queryByTestId('remove-box'))
 
                                     await waitFor(() => {
-                                        expect(App.queryByText(`Erasing ${note.title} failed`)).toBeTruthy()
+                                        expect(
+                                            App.queryByText(`Erasing ${note.title} failed`)
+                                        ).toBeTruthy()
                                         expect(App.queryByText('Got it')).toBeEnabled()
                                     })
 
@@ -285,17 +327,21 @@ describe('App', () => {
                             test('Completely remove stored note', async () => {
                                 NoteCommands.erase = jest.fn().mockResolvedValueOnce({})
                                 const notes = [{ id: '1', title: 'first title' }]
-                                AppCommands.getItems = jest.fn().mockResolvedValueOnce({
+                                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                     notes,
                                 })
 
                                 const App = render(<TestApp />)
 
-                                await waitFor(() => expect(App.queryByTestId('remove-note')).toBeTruthy())
+                                await waitFor(() =>
+                                    expect(App.queryByTestId('remove-note')).toBeTruthy()
+                                )
 
                                 fireEvent.press(App.queryByTestId('remove-note'))
 
-                                await waitFor(() => expect(App.queryByTestId('remove-box')).toBeEnabled())
+                                await waitFor(() =>
+                                    expect(App.queryByTestId('remove-box')).toBeEnabled()
+                                )
 
                                 fireEvent.press(App.queryByTestId('remove-box'))
 
@@ -324,7 +370,8 @@ const errorsToSilence = [
 
 const consoleError = console.error
 jest.spyOn(console, 'error').mockImplementation((message, ...optionalParams) => {
-    if (!errorsToSilence.some((error) => message.includes(error))) consoleError(message, optionalParams)
+    if (!errorsToSilence.some((error) => message.includes(error)))
+        consoleError(message, optionalParams)
 })
 
 jest.spyOn(console, 'warn').mockImplementation()

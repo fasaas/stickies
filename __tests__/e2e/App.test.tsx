@@ -25,7 +25,7 @@ describe('I as the customer', () => {
 
     xtest('Renders', () => App.debug())
 
-    test('I see a loading animation that hints the app is loading stored notes', () => {
+    test('I see a loading animation that hints the app is loading', () => {
         expect(App.queryByTestId('loading-app'))
     })
 
@@ -88,8 +88,10 @@ describe('I as the customer', () => {
 
     describe('Given I already have a created note', () => {
         beforeEach(async () => {
-            await AppCommands.save('id1', {
+            await AppCommands.saveNote('id1', {
                 title: 'id1 title',
+                createdAt: 12345,
+                lastModifiedAt: 23456,
                 sections: [
                     {
                         type: '@native/translation',
@@ -131,14 +133,18 @@ describe('I as the customer', () => {
             await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
             fireEvent.press(App.queryByText(/Create new note/))
 
-            await waitFor(() => expect(App.queryByPlaceholderText('Note title')).toHaveTextContent(''))
+            await waitFor(() =>
+                expect(App.queryByPlaceholderText('Note title')).toHaveTextContent('')
+            )
         })
 
         test('I enable the Save button by typing something in the title input', async () => {
             await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
             fireEvent.press(App.queryByText(/Create new note/))
 
-            await waitFor(() => expect(App.queryByPlaceholderText('Note title')).toHaveTextContent(''))
+            await waitFor(() =>
+                expect(App.queryByPlaceholderText('Note title')).toHaveTextContent('')
+            )
             const NoteView = within(App.queryByTestId('note-view'))
             fireEvent.changeText(NoteView.queryByPlaceholderText('Note title'), 'Any title')
 
@@ -149,7 +155,9 @@ describe('I as the customer', () => {
             await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
             fireEvent.press(App.queryByText(/Create new note/))
 
-            await waitFor(() => expect(App.queryByPlaceholderText('Note title')).toHaveTextContent(''))
+            await waitFor(() =>
+                expect(App.queryByPlaceholderText('Note title')).toHaveTextContent('')
+            )
             const NoteView = within(App.queryByTestId('note-view'))
             fireEvent.changeText(NoteView.queryByPlaceholderText('Note title'), 'Any title')
 
@@ -163,7 +171,9 @@ describe('I as the customer', () => {
             await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
             fireEvent.press(App.queryByText(/Create new note/))
 
-            await waitFor(() => expect(App.queryByPlaceholderText('Note title')).toHaveTextContent(''))
+            await waitFor(() =>
+                expect(App.queryByPlaceholderText('Note title')).toHaveTextContent('')
+            )
             const NoteView = within(App.queryByTestId('note-view'))
             fireEvent.changeText(NoteView.queryByPlaceholderText('Note title'), 'Any title')
 
@@ -197,7 +207,8 @@ const errorsToSilence = [
 
 const consoleError = console.error
 jest.spyOn(console, 'error').mockImplementation((message, ...optionalParams) => {
-    if (!errorsToSilence.some((error) => message.includes(error))) consoleError(message, optionalParams)
+    if (!errorsToSilence.some((error) => message.includes(error)))
+        consoleError(message, optionalParams)
 })
 
 jest.spyOn(console, 'warn').mockImplementation()
