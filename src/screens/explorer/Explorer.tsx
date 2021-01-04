@@ -1,14 +1,15 @@
-import { FontAwesome } from '@expo/vector-icons'
-import React, { Fragment } from 'react'
-import { Button, Pressable, Text, View } from 'react-native'
+import React from 'react'
+import { Button, Text, View } from 'react-native'
 import { Note, Notes } from '../../interfaces'
+import { ExplorerNotes } from './ExplorerNotes'
+import { Item } from './Item'
 
 export const Explorer = ({ navigation, notes }: { navigation: any; notes: Notes }) => {
     if (notes.length === 0) return <EmptyExplorer navigation={navigation} />
-    return <ExplorerWithNotes notes={notes} />
+    return <ExplorerWithNotes navigation={navigation} notes={notes} />
 }
 
-const EmptyExplorer = ({ navigation }: { navigation: any }) => {
+const EmptyExplorer = ({}: { navigation: any }) => {
     return (
         <View>
             <Text>You don't have any saved notes</Text>
@@ -17,20 +18,12 @@ const EmptyExplorer = ({ navigation }: { navigation: any }) => {
     )
 }
 
-const ExplorerWithNotes = ({ notes }: { notes: Notes }) => {
+const ExplorerWithNotes = ({ notes }: { navigation: any; notes: Notes }) => {
     return (
         <View>
             <Text>Stored notes</Text>
-            {notes.map((note: Note, index: number) => {
-                return (
-                    <View key={`note-${index}`} testID={note.id}>
-                        <FontAwesome testID='remove-note' name='trash-o' size={24} color='black' />
-                        <Pressable>
-                            <Text>{note.title}</Text>
-                        </Pressable>
-                    </View>
-                )
-            })}
+            <ExplorerNotes notes={notes} />
+
             <Button title='Create new note' />
         </View>
     )

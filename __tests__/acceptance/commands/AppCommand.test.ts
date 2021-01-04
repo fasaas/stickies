@@ -3,8 +3,6 @@ import AppCommands from '../../../src/commands/AppCommands'
 import { NOTE_PREFIX } from '../../../src/constants'
 
 describe('App Commands', () => {
-    beforeEach(() => jest.restoreAllMocks())
-
     describe('saveNote', () => {
         describe('Returns failed', () => {
             test('Given id is invalid', async () => {
@@ -92,19 +90,24 @@ describe('App Commands', () => {
 
         describe('Returns succeeded', () => {
             test('Given content is valid', async () => {
-                const result = await AppCommands.saveNote('valid Id', {
+                const saveNoteContent = {
                     title: 'valid title',
                     createdAt: 12345,
                     lastModifiedAt: 54321,
                     sections: [{ name: 'Translation' }],
-                })
+                }
+                const result = await AppCommands.saveNote('valid Id', saveNoteContent)
 
+                expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+                    `${NOTE_PREFIX}valid Id`,
+                    JSON.stringify({ ...saveNoteContent, id: `${NOTE_PREFIX}valid Id` })
+                )
                 expect(result.failed).toBeFalsy()
             })
         })
     })
 
-    describe('getItems', () => {
+    describe('getAllNotes', () => {
         describe('Returns failed', () => {
             test('Given AsyncStorage getAllKeys fails', async () => {
                 AsyncStorage.getAllKeys = jest
@@ -159,6 +162,39 @@ describe('App Commands', () => {
                 expect(AsyncStorage.multiGet).toHaveBeenCalledWith([`${NOTE_PREFIX}id-1`])
                 expect(result.notes).toHaveLength(1)
                 expect(result.notes).toMatchObject([{ any: 'content' }])
+            })
+        })
+    })
+
+    describe('deleteNote', () => {
+        describe('Returns failed', () => {
+            test('Given id is invalid', async () => {
+                for (const invalidId of [null, undefined, '', ' ', '  ', 'note-unrelated']) {
+                    const result = await AppCommands.deleteNote(invalidId)
+
+                    expect(AsyncStorage.removeItem).not.toHaveBeenCalled()
+                    expect(result.failed).toBeTruthy()
+                }
+            })
+
+            test('Given AsyncStorage removeItem fails', async () => {
+                AsyncStorage.removeItem = jest
+                    .fn()
+                    .mockRejectedValueOnce(new Error('Remove item error'))
+
+                const result = await AppCommands.deleteNote(`${NOTE_PREFIX}id-1`)
+
+                expect(result.failed).toBeTruthy()
+            })
+        })
+
+        describe('Returns succeeded', () => {
+            test('Given AsyncStorage removeItem succeeds', async () => {
+                AsyncStorage.removeItem = jest.fn().mockResolvedValueOnce(undefined)
+
+                const result = await AppCommands.deleteNote(`${NOTE_PREFIX}id-1`)
+
+                expect(result.failed).toBeFalsy()
             })
         })
     })

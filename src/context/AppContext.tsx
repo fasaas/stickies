@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import React, { ReactNode } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 import AppCommands from '../commands/AppCommands'
+import { Note, Notes } from '../interfaces'
 
 const AppContext = React.createContext()
 
@@ -14,7 +15,7 @@ enum AppState {
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
     const [state, setState] = React.useState(AppState.Idle)
-    const [notes, setNotes] = React.useState(undefined)
+    const [notes, setNotes] = React.useState<Notes | undefined>(undefined)
 
     const effect = async () => {
         setState(AppState.Pending)
@@ -25,6 +26,16 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
             setNotes(result.notes)
             setState(AppState.Resolved)
         }
+    }
+
+    const deleteNote = async (id: string) => {
+        const result = await AppCommands.deleteNote(id)
+        if (result.failed) {
+            return true
+        }
+
+        const filteredNotes = notes?.filter((note) => note.id !== id)
+        setNotes(filteredNotes)
     }
 
     React.useEffect(() => {
@@ -59,7 +70,11 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         }
 
         case AppState.Resolved: {
-            return <AppContext.Provider value={{ notes }}>{children}</AppContext.Provider>
+            return (
+                <AppContext.Provider value={{ notes, delete: deleteNote }}>
+                    {children}
+                </AppContext.Provider>
+            )
         }
     }
 }
@@ -71,4 +86,11 @@ const useNotes = () => {
     return ctx.notes
 }
 
-export { AppProvider, useNotes }
+const useDeleteNote = (): ((id: string) => Promise<boolean>) => {
+    const ctx = React.useContext(AppContext)
+    if (ctx === undefined) throw new Error('useDeleteNote() must be used within <AppProvider>')
+
+    return ctx.delete
+}
+
+export { AppProvider, useNotes, useDeleteNote }

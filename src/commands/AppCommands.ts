@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NOTE_PREFIX } from '../constants'
-import { Notes, Section, Sections } from '../interfaces'
+import { Section, Sections } from '../interfaces'
 
 const succeeded = { failed: false }
 
@@ -37,7 +37,7 @@ const saveNote = async (
 
     let contentToSet
     try {
-        contentToSet = JSON.stringify(content)
+        contentToSet = JSON.stringify({ ...content, id: `${NOTE_PREFIX}${id}` })
     } catch (e) {
         return {
             failed: { reason: `Content is unstringifiable ${e.message || e} type ${typeof e}` },
@@ -59,7 +59,7 @@ const saveNote = async (
     return succeeded
 }
 
-const getAllNotes = async (): Promise<{ failed?: { reason: string }; notes?: Notes }> => {
+const getAllNotes = async () => {
     let storedKeys = []
     try {
         storedKeys = await AsyncStorage.getAllKeys()
@@ -85,4 +85,23 @@ const getAllNotes = async (): Promise<{ failed?: { reason: string }; notes?: Not
     }
 }
 
-export default { saveNote, getAllNotes }
+const deleteNote = async (id: string) => {
+    if (!id || id.trim().length === 0) {
+        return { failed: { reason: `Id ${id} is invalid` } }
+    }
+
+    const idIsntNoteRelated = !id.startsWith(NOTE_PREFIX)
+    if (idIsntNoteRelated) {
+        return { failed: { reason: `Id ${id} isn't note related` } }
+    }
+
+    try {
+        await AsyncStorage.removeItem(id)
+        return { failed: false }
+    } catch (e) {
+        const message = e.message || e
+        return { failed: { reason: `AsyncStorage removeItem failed ${message}` } }
+    }
+}
+
+export default { saveNote, getAllNotes, deleteNote }

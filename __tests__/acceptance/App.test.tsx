@@ -213,11 +213,8 @@ describe('App', () => {
                     })
 
                     describe('When clicking on the permanently delete button', () => {
-                        describe('Given erase request fails', () => {
-                            test('Show a dialog indicating erase failed', async () => {
-                                NoteCommands.erase = jest
-                                    .fn()
-                                    .mockResolvedValueOnce({ failed: true })
+                        describe('Given remove request fails', () => {
+                            test('Show a failing message indicating remove failed', async () => {
                                 const note = { id: '1', title: 'first title' }
                                 AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                     notes: [note],
@@ -234,58 +231,22 @@ describe('App', () => {
                                     expect(App.queryByTestId('remove-box')).toBeEnabled()
                                 )
 
+                                AppCommands.deleteNote = jest
+                                    .fn()
+                                    .mockResolvedValueOnce({ failed: true })
                                 fireEvent.press(App.queryByTestId('remove-box'))
 
                                 await waitFor(() => {
                                     expect(
-                                        App.queryByText(`Erasing ${note.title} failed`)
+                                        App.queryByText(`Removing ${note.title} failed`)
                                     ).toBeTruthy()
                                     expect(App.queryByText('Got it')).toBeEnabled()
                                 })
                             })
 
-                            describe('After closing dialog by hardware button', () => {
-                                test('Render about-to-erase note again', async () => {
-                                    NoteCommands.erase = jest
-                                        .fn()
-                                        .mockResolvedValueOnce({ failed: true })
-                                    const note = { id: '1', title: 'first title' }
-                                    AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
-                                        notes: [note],
-                                    })
-
-                                    const App = render(<TestApp />)
-
-                                    await waitFor(() =>
-                                        expect(App.queryByTestId('remove-note')).toBeTruthy()
-                                    )
-                                    fireEvent.press(App.queryByTestId('remove-note'))
-
-                                    await waitFor(() =>
-                                        expect(App.queryByTestId('remove-box')).toBeEnabled()
-                                    )
-
-                                    fireEvent.press(App.queryByTestId('remove-box'))
-
-                                    await waitFor(() => {
-                                        expect(
-                                            App.queryByText(`Erasing ${note.title} failed`)
-                                        ).toBeTruthy()
-                                        expect(App.queryByText('Got it')).toBeEnabled()
-                                    })
-
-                                    fireEvent(App.queryByTestId('erase-failed-view'), 'dismiss')
-
-                                    await waitFor(() => {
-                                        expect(App.queryByText(note.title)).toBeTruthy()
-                                        expect(App.queryByText('Undo')).not.toBeTruthy()
-                                    })
-                                })
-                            })
-
                             describe('After closing dialog by dialog button', () => {
-                                test('Render about-to-erase note again', async () => {
-                                    NoteCommands.erase = jest
+                                test('Render about-to-remove note again', async () => {
+                                    AppCommands.deleteNote = jest
                                         .fn()
                                         .mockResolvedValueOnce({ failed: true })
                                     const note = { id: '1', title: 'first title' }
@@ -308,7 +269,7 @@ describe('App', () => {
 
                                     await waitFor(() => {
                                         expect(
-                                            App.queryByText(`Erasing ${note.title} failed`)
+                                            App.queryByText(`Removing ${note.title} failed`)
                                         ).toBeTruthy()
                                         expect(App.queryByText('Got it')).toBeEnabled()
                                     })
@@ -323,9 +284,9 @@ describe('App', () => {
                             })
                         })
 
-                        describe('Given erase request succeeds', () => {
+                        describe('Given remove request succeeds', () => {
                             test('Completely remove stored note', async () => {
-                                NoteCommands.erase = jest.fn().mockResolvedValueOnce({})
+                                AppCommands.deleteNote = jest.fn().mockResolvedValueOnce({})
                                 const notes = [{ id: '1', title: 'first title' }]
                                 AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
                                     notes,
@@ -347,7 +308,7 @@ describe('App', () => {
 
                                 await waitFor(() => {
                                     expect(App.queryByText('first title')).not.toBeTruthy()
-                                    expect(App.queryAllByTestId(/note-/)).toHaveLength(0)
+                                    expect(App.queryAllByTestId(/NOTE_PREF/)).toHaveLength(0)
                                 })
                             })
                         })
