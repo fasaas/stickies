@@ -2,15 +2,18 @@ import React, { Fragment, useState } from 'react'
 import { Note, Notes } from '../../interfaces'
 import { AntDesign, FontAwesome } from '@expo/vector-icons'
 import { ActivityIndicator, Button, Pressable, Text, View } from 'react-native'
-import AppCommands from '../../commands/AppCommands'
 import { useDeleteNote } from '../../context/AppContext'
 
 export const ExplorerNotes = ({ notes }: { notes: Notes }) => {
-    return notes.map((note: Note, index: number) => (
-        <View testID={note.id} key={`note-${index}`}>
-            <ExplorerNote note={note} />
+    return (
+        <View>
+            {notes.map((note: Note, index: number) => (
+                <View testID={note.id} key={`note-${index}`}>
+                    <ExplorerNote note={note} />
+                </View>
+            ))}
         </View>
-    ))
+    )
 }
 
 enum ExplorerNoteStatus {
@@ -21,7 +24,6 @@ enum ExplorerNoteStatus {
 }
 
 const ExplorerNote = ({ note }: { note: Note }) => {
-    console.log('🚀 ~ file: ExplorerNotes.tsx ~ line 24 ~ ExplorerNote ~ note', note)
     const [status, setStatus] = useState(ExplorerNoteStatus.DISPLAY)
     const deleteNote = useDeleteNote()
 

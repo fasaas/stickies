@@ -86,41 +86,8 @@ describe('I as the customer', () => {
         })
     })
 
-    describe('Given I already have a created note', () => {
-        beforeEach(async () => {
-            await AppCommands.saveNote('id1', {
-                title: 'id1 title',
-                createdAt: 12345,
-                lastModifiedAt: 23456,
-                sections: [
-                    {
-                        type: '@native/translation',
-                        name: 'Translation',
-                        id: Date.now().toString(),
-                        props: { from: 'From value', to: 'To value' },
-                    },
-                ],
-            })
-
-            App = render(<TestApp />)
-        })
-
-        describe('When I click on that note', () => {
-            test('I see the content in detail inside the Note tab', async () => {
-                await waitFor(() => expect(App.queryByText('id1 title')).toBeTruthy())
-
-                fireEvent.press(App.queryByText('id1 title'))
-
-                await waitFor(() => {
-                    expect(App.queryByText('From value')).toBeTruthy()
-                    expect(App.queryByText('To value')).toBeTruthy()
-                })
-            })
-        })
-    })
-
-    xdescribe('Given I want to create a new note', () => {
-        test('I first use the Create new note to go to Note tab', async () => {
+    describe('Given I want to create a new note', () => {
+        test('I first use the Create new notebutton to go to Note tab', async () => {
             await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
             fireEvent.press(App.queryByText(/Create new note/))
 
@@ -191,6 +158,70 @@ describe('I as the customer', () => {
             const ExplorerView = within(App.queryByTestId('explorer-tree'))
 
             await waitFor(() => expect(ExplorerView.queryByText('Any title')).toBeTruthy())
+        })
+
+        test('I see the new note persisted when reloading the app', async () => {
+            await waitFor(() => expect(App.queryByText(/Create new note/)).toBeEnabled())
+            fireEvent.press(App.queryByText(/Create new note/))
+
+            await waitFor(() =>
+                expect(App.queryByPlaceholderText('Note title')).toHaveTextContent('')
+            )
+            const NoteView = within(App.queryByTestId('note-view'))
+            fireEvent.changeText(NoteView.queryByPlaceholderText('Note title'), 'Any title')
+
+            await waitFor(() => expect(NoteView.queryByText('Save')).toBeEnabled())
+            fireEvent.press(NoteView.queryByText('Save'))
+
+            await waitFor(() => expect(NoteView.queryByText('Saved!')).toBeTruthy())
+
+            fireEvent.press(App.queryByA11yLabel(/Explorer/))
+
+            await waitFor(() => {
+                expect(App.queryByTestId('explorer-tree')).toBeTruthy()
+            })
+
+            const ExplorerView = within(App.queryByTestId('explorer-tree'))
+
+            await waitFor(() => expect(ExplorerView.queryByText('Any title')).toBeTruthy())
+            App.unmount()
+
+            const AppReloaded = render(<TestApp />)
+
+            await waitFor(() => expect(AppReloaded.queryByText('Any title')).toBeTruthy())
+        })
+    })
+
+    describe('Given I already have a created note', () => {
+        beforeAll(async () => {
+            await AppCommands.saveNote('id1', {
+                title: 'id1 title',
+                createdAt: 12345,
+                lastModifiedAt: 23456,
+                sections: [
+                    {
+                        type: '@native/translation',
+                        name: 'Translation',
+                        id: Date.now().toString(),
+                        props: { from: 'From value', to: 'To value' },
+                    },
+                ],
+            })
+
+            App = render(<TestApp />)
+        })
+
+        describe('When I click on that note', () => {
+            test('I see the content in detail inside the Note tab', async () => {
+                await waitFor(() => expect(App.queryByText('id1 title')).toBeTruthy())
+
+                fireEvent.press(App.queryByText('id1 title'))
+
+                await waitFor(() => {
+                    expect(App.queryByText('From value')).toBeTruthy()
+                    expect(App.queryByText('To value')).toBeTruthy()
+                })
+            })
         })
     })
 

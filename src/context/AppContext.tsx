@@ -38,6 +38,12 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         setNotes(filteredNotes)
     }
 
+    const addNote = (title: string) => {
+        const _notes = Array.from(notes || [])
+        _notes.push({ title })
+        setNotes(_notes)
+    }
+
     React.useEffect(() => {
         effect()
     }, [])
@@ -71,7 +77,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
         case AppState.Resolved: {
             return (
-                <AppContext.Provider value={{ notes, delete: deleteNote }}>
+                <AppContext.Provider value={{ notes, delete: deleteNote, add: addNote }}>
                     {children}
                 </AppContext.Provider>
             )
@@ -93,4 +99,11 @@ const useDeleteNote = (): ((id: string) => Promise<boolean>) => {
     return ctx.delete
 }
 
-export { AppProvider, useNotes, useDeleteNote }
+const useAddNote = (): ((title: string) => void) => {
+    const ctx = React.useContext(AppContext)
+    if (ctx === undefined) throw new Error('useAddNote() must be used within <AppProvider>')
+
+    return ctx.add
+}
+
+export { AppProvider, useNotes, useDeleteNote, useAddNote }

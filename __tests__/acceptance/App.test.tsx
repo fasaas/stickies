@@ -319,7 +319,7 @@ describe('App', () => {
     })
 
     describe('Given user has no notes', () => {
-        test('Click on ')
+        test('Click on ', () => {})
     })
 })
 

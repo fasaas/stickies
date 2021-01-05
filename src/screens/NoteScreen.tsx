@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Note } from './note/Note'
 
 export const NoteScreen = ({ navigation, route }) => {
-    return <SafeAreaView></SafeAreaView>
+    const noteType = route?.params?.type || 'new'
+    return (
+        <SafeAreaView>
+            <Note />
+        </SafeAreaView>
+    )
 }
