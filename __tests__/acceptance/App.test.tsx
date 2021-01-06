@@ -39,73 +39,7 @@ describe('App', () => {
     beforeEach(cleanup)
     afterEach(async () => await AsyncStorage.clear())
 
-    test('Show a loading indicator before app is fully loaded', async () => {
-        AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ failed: true })
-        const App = render(<TestApp />)
-
-        expect(App.queryByTestId('loading-app')).toBeTruthy()
-    })
-
     describe('When requesting for notes', () => {
-        describe('Given request rejects', () => {
-            test('Show a retry button', async () => {
-                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ failed: true })
-                const App = render(<TestApp />)
-
-                await waitForElementToBeRemoved(() => App.queryByTestId('loading-app'))
-                await waitFor(() => expect(App.queryByTestId('app-retry')).toBeTruthy())
-            })
-
-            describe('When clicking on retry button', () => {
-                test('Show bottom tabs if new request resolves', async () => {
-                    AppCommands.getAllNotes = jest
-                        .fn()
-                        .mockResolvedValueOnce({ failed: true })
-                        .mockResolvedValueOnce({ notes: [] })
-                    const App = render(<TestApp />)
-
-                    await waitFor(() => expect(App.queryByTestId('app-retry')).toBeTruthy())
-
-                    fireEvent.press(App.queryByTestId('app-retry'))
-
-                    await waitFor(() => {
-                        expect(App.queryByA11yLabel(/Explorer/)).toBeTruthy()
-                        expect(App.queryByA11yLabel(/Note/)).toBeTruthy()
-                    })
-                })
-            })
-        })
-
-        describe('Given request resolves', () => {
-            test('Show bottom tabs', async () => {
-                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ notes: [] })
-                const App = render(<TestApp />)
-
-                await waitFor(() => {
-                    expect(App.queryByA11yLabel(/Explorer/)).toBeTruthy()
-                    expect(App.queryByA11yLabel(/Note/)).toBeTruthy()
-                })
-            })
-        })
-
-        describe('Given request resolves with empty notes', () => {
-            test('Indicate user has no notes', async () => {
-                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ notes: [] })
-                const App = render(<TestApp />)
-
-                await waitFor(() =>
-                    expect(App.queryByText("You don't have any saved notes")).toBeEnabled()
-                )
-            })
-
-            test('Show a create new note button', async () => {
-                AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({ notes: [] })
-                const App = render(<TestApp />)
-
-                await waitFor(() => expect(App.queryByText('Create new note')).toBeEnabled())
-            })
-        })
-
         describe('Given request resolves with notes', () => {
             test('Render a heading', async () => {
                 AppCommands.getAllNotes = jest.fn().mockResolvedValueOnce({
@@ -318,8 +252,10 @@ describe('App', () => {
         })
     })
 
-    describe('Given user has no notes', () => {
-        test('Click on ', () => {})
+    describe('Given user creates a new note', () => {
+        describe('Given save fails', () => {
+            test('Show a')
+        })
     })
 })
 

@@ -29,12 +29,17 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const deleteNote = async (id: string) => {
+        console.log('🚀 ~ file: AppContext.tsx ~ line 32 ~ deleteNote ~ id', id)
         const result = await AppCommands.deleteNote(id)
         if (result.failed) {
             return true
         }
 
         const filteredNotes = notes?.filter((note) => note.id !== id)
+        console.log(
+            '🚀 ~ file: AppContext.tsx ~ line 39 ~ deleteNote ~ filteredNotes',
+            filteredNotes
+        )
         setNotes(filteredNotes)
     }
 

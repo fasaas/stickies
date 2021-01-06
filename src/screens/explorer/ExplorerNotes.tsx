@@ -5,6 +5,7 @@ import { ActivityIndicator, Button, Pressable, Text, View } from 'react-native'
 import { useDeleteNote } from '../../context/AppContext'
 
 export const ExplorerNotes = ({ notes }: { notes: Notes }) => {
+    console.log('🚀 ~ file: ExplorerNotes.tsx ~ line 8 ~ ExplorerNotes ~ notes', notes)
     return (
         <View>
             {notes.map((note: Note, index: number) => (
@@ -17,14 +18,20 @@ export const ExplorerNotes = ({ notes }: { notes: Notes }) => {
 }
 
 enum ExplorerNoteStatus {
-    DISPLAY,
-    PRE_REMOVE,
-    REMOVING,
-    REJECTED,
+    DISPLAY = 'display',
+    PRE_REMOVE = 'pre-remove',
+    REMOVING = 'removing',
+    REJECTED = 'rejected',
+    RESOLVED = 'resolved',
 }
 
 const ExplorerNote = ({ note }: { note: Note }) => {
     const [status, setStatus] = useState(ExplorerNoteStatus.DISPLAY)
+    console.log(
+        '🚀 ~ file: ExplorerNotes.tsx ~ line 30 ~ ExplorerNote ~ status',
+        note.id,
+        status.toString()
+    )
     const deleteNote = useDeleteNote()
 
     switch (status) {
@@ -55,6 +62,7 @@ const ExplorerNote = ({ note }: { note: Note }) => {
                         size={24}
                         color='grey'
                         onPress={async () => {
+                            console.log('Deleting', note.id)
                             setStatus(ExplorerNoteStatus.REMOVING)
                             const failed = await deleteNote(note.id)
                             if (failed) {
@@ -67,6 +75,7 @@ const ExplorerNote = ({ note }: { note: Note }) => {
         }
 
         case ExplorerNoteStatus.REMOVING: {
+            console.log('On removing state', note.id)
             return (
                 <Fragment>
                     <ActivityIndicator />
@@ -82,6 +91,10 @@ const ExplorerNote = ({ note }: { note: Note }) => {
                     <Button title='Got it' onPress={() => setStatus(ExplorerNoteStatus.DISPLAY)} />
                 </Fragment>
             )
+        }
+
+        case ExplorerNoteStatus.RESOLVED: {
+            return null
         }
     }
 }
