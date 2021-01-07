@@ -1,11 +1,43 @@
 import React from 'react'
+import { Button, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Explorer } from './explorer'
+import { useAppProvider } from '../AppContext'
+import { Octicons } from '@expo/vector-icons'
 
 export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
+    const { notes, setNotes } = useAppProvider()
     return (
         <SafeAreaView>
-            <Explorer navigation={navigation} />
+            <Text>Notes</Text>
+            {notes.map(({ id, title }, index) => (
+                <View>
+                    <Pressable
+                        onPress={() => {
+                            navigation.navigate('Note', { isNew: false, id, title })
+                        }}
+                    >
+                        <Text key={index}>
+                            {id} - {title}
+                        </Text>
+                    </Pressable>
+                    <Octicons
+                        name='trashcan'
+                        size={24}
+                        color='black'
+                        onPress={() => {
+                            const _notes = notes.filter((_note) => id !== _note.id)
+                            setNotes(_notes)
+                        }}
+                    />
+                </View>
+            ))}
+
+            <Button
+                title='Create new note'
+                onPress={() =>
+                    navigation.navigate('Note', { isNew: true, id: Date.now().toString() })
+                }
+            />
         </SafeAreaView>
     )
 }

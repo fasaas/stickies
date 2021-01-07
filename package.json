@@ -7,10 +7,7 @@
         "web": "expo start --web",
         "eject": "expo eject",
         "w": "jest --watch",
-        "t:a": "jest -c jest.acceptance.config.js",
-        "t:e": "jest -c jest.e2e.config.js",
-        "w:a": "jest -c jest.acceptance.config.js --watch",
-        "w:e": "jest -c jest.e2e.config.js --watch",
+        "watch": "jest --watch",
         "cover": "jest --coverage=true"
     },
     "jest": {
