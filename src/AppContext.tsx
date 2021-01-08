@@ -1,14 +1,31 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
 
 const AppContext = React.createContext()
 
 export const AppProvider = ({ children }) => {
     const [notes, setNotes] = React.useState([
-        { id: '1', title: 'qwert' },
-        { id: '2', title: 'asdf' },
-        { id: '3', title: 'zxcvb' },
-        { id: '4', title: '12345' },
+        // { id: '1', title: 'qwert' },
+        // { id: '2', title: 'asdf' },
+        // { id: '3', title: 'zxcvb' },
+        // { id: '4', title: '12345' },
     ])
+
+    React.useEffect(() => {
+        const effect = async () => {
+            const allKeys = await AsyncStorage.getAllKeys()
+            const noteKeys = allKeys.filter((key) => key.startsWith('@note-'))
+            const allNoteContents = await AsyncStorage.multiGet(noteKeys)
+
+            const notes = allNoteContents.map(([noteId, noteContent]) => ({
+                id: noteId.replace('@note-', ''),
+                ...JSON.parse(noteContent),
+            }))
+            setNotes(notes)
+        }
+
+        effect()
+    }, [])
 
     return <AppContext.Provider value={{ notes, setNotes }}>{children}</AppContext.Provider>
 }
