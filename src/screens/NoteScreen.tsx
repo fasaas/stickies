@@ -4,21 +4,27 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAppProvider } from '../AppContext'
 
 export const NoteScreen = ({ navigation, route }: { navigation: any; route: any }) => {
-    console.log('🚀 ~ file: NoteScreen.tsx ~ line 7 ~ NoteScreen ~ navigation', navigation)
-    const { isNew, id } = route.params || {}
-    const [isNewNote, setIsNewNote] = React.useState(isNew)
+    const [noteExists, setNoteExists] = React.useState(false)
+    const [title, setTitle] = React.useState('')
+    const [noteId, setNoteId] = React.useState(Date.now().toString())
     const { notes, setNotes } = useAppProvider()
-    const [title, setTitle] = React.useState(isNew ? '' : route.params.title)
 
     React.useEffect(() => {
-        console.log('Use effect', id, isNew)
-        console.log(
-            '🚀 ~ file: NoteScreen.tsx ~ line 23 ~ React.useEffect ~ route.params',
-            route.params
-        )
-        setTitle(isNew ? '' : route.params.title)
-        setIsNewNote(isNew)
-    }, [id, isNew])
+        console.log('Use effect', route.params)
+        const { exists } = route.params || {}
+        if (exists) {
+            console.log('Exists')
+            setTitle(route.params.title)
+            setNoteExists(true)
+            setNoteId(route.params.id)
+        } else {
+            console.log('doesnot exist')
+
+            setTitle('')
+            setNoteExists(false)
+            setNoteId(Date.now().toString())
+        }
+    }, [route.params])
 
     return (
         <SafeAreaView>
@@ -28,12 +34,20 @@ export const NoteScreen = ({ navigation, route }: { navigation: any; route: any 
                 onPress={() => {
                     const _notes = Array.from(notes)
 
-                    if (isNewNote) {
-                        setIsNewNote(false)
-                        _notes.push({ id, title })
+                    if (!noteExists) {
+                        console.log(
+                            '🚀 ~ file: NoteScreen.tsx ~ line 44 ~ NoteScreen ~ title',
+                            title
+                        )
+                        console.log(
+                            '🚀 ~ file: NoteScreen.tsx ~ line 44 ~ NoteScreen ~ noteId',
+                            noteId
+                        )
+                        _notes.push({ id: noteId, title })
                         setNotes(_notes)
+                        setNoteExists(true)
                     } else {
-                        const index = _notes.findIndex((note) => note.id === id)
+                        const index = _notes.findIndex((note) => note.id === noteId)
                         if (index !== -1) {
                             _notes[index].title = title
 

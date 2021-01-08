@@ -13,7 +13,7 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
                 <View>
                     <Pressable
                         onPress={() => {
-                            navigation.navigate('Note', { isNew: false, id, title })
+                            navigation.navigate('Note', { exists: true, id, title })
                         }}
                     >
                         <Text key={index}>
@@ -34,9 +34,7 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
 
             <Button
                 title='Create new note'
-                onPress={() =>
-                    navigation.navigate('Note', { isNew: true, id: Date.now().toString() })
-                }
+                onPress={() => navigation.navigate('Note', { exists: false })}
             />
         </SafeAreaView>
     )
