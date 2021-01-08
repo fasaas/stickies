@@ -35,25 +35,22 @@ export const NoteScreen = ({ navigation, route }: { navigation: any; route: any 
                     const _notes = Array.from(notes)
 
                     if (!noteExists) {
-                        console.log(
-                            '🚀 ~ file: NoteScreen.tsx ~ line 44 ~ NoteScreen ~ title',
-                            title
-                        )
-                        console.log(
-                            '🚀 ~ file: NoteScreen.tsx ~ line 44 ~ NoteScreen ~ noteId',
-                            noteId
-                        )
                         _notes.push({ id: noteId, title })
                         setNotes(_notes)
-                        setNoteExists(true)
                     } else {
                         const index = _notes.findIndex((note) => note.id === noteId)
                         if (index !== -1) {
                             _notes[index].title = title
 
                             setNotes(_notes)
+                        } else {
+                            //I need this case for: If I go to a Note clicking on an existing note
+                            // Then I delete the note from explorer, I want to save it
+                            _notes.push({ id: noteId, title })
+                            setNotes(_notes)
                         }
                     }
+                    navigation.setParams({ exists: true, id: noteId, title })
                 }}
             />
         </SafeAreaView>
