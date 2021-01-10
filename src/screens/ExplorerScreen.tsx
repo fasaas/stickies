@@ -11,13 +11,13 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
         <SafeAreaView>
             <Text>Notes</Text>
             {notes.map(({ id, title }, index) => (
-                <View>
+                <View key={index}>
                     <Pressable
                         onPress={() => {
                             navigation.navigate('Note', { exists: true, id, title })
                         }}
                     >
-                        <Text key={index}>
+                        <Text>
                             {id} - {title}
                         </Text>
                     </Pressable>
@@ -34,10 +34,7 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
                 </View>
             ))}
 
-            <Button
-                title='Create new note'
-                onPress={() => navigation.navigate('Note', { exists: false })}
-            />
+            <Button title='Create new note' onPress={() => navigation.navigate('Note', { exists: false })} />
         </SafeAreaView>
     )
 }
