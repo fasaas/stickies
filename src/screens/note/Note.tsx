@@ -15,7 +15,7 @@ export const Note = (props: { id: string; content: any; navigation: any }) => {
 
     return (
         <View>
-            <TextInput value={title} onChangeText={setTitle} />
+            <TextInput placeholder='заглавие (título)' value={title} onChangeText={setTitle} />
             <Button
                 title='Save'
                 onPress={async () => {

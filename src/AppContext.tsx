@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
+import { NOTE_PREFIX } from './constants'
 
 const AppContext = React.createContext()
 
@@ -14,11 +15,11 @@ export const AppProvider = ({ children }) => {
     React.useEffect(() => {
         const effect = async () => {
             const allKeys = await AsyncStorage.getAllKeys()
-            const noteKeys = allKeys.filter((key) => key.startsWith('@note-'))
+            const noteKeys = allKeys.filter((key) => key.startsWith(NOTE_PREFIX))
             const allNoteContents = await AsyncStorage.multiGet(noteKeys)
 
             const notes = allNoteContents.map(([noteId, noteContent]) => ({
-                id: noteId.replace('@note-', ''),
+                id: noteId.replace(NOTE_PREFIX, ''),
                 ...JSON.parse(noteContent),
             }))
             setNotes(notes)

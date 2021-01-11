@@ -25,6 +25,10 @@ const TestApp = () => {
     )
 }
 
+test('Renders', async () => {
+    render(<TestApp />)
+})
+
 const errorsToSilence = [
     'Warning: You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);',
     'Warning: An update to',

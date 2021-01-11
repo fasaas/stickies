@@ -10,6 +10,7 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
     return (
         <SafeAreaView>
             <Text>Notes</Text>
+            <Text>Idioma origen 1 (Origin language 1)</Text>
             {notes.map(({ id, title }, index) => (
                 <View key={index}>
                     <Pressable
@@ -17,7 +18,7 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
                             navigation.navigate('Note', { exists: true, id, title })
                         }}
                     >
-                        <Text>
+                        <Text style={{ fontSize: 16 }}>
                             {id} - {title}
                         </Text>
                     </Pressable>
@@ -34,7 +35,11 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
                 </View>
             ))}
 
-            <Button title='Create new note' onPress={() => navigation.navigate('Note', { exists: false })} />
+            <Button
+                data-cy='new-note'
+                title='Create new note'
+                onPress={() => navigation.navigate('Note', { exists: false })}
+            />
         </SafeAreaView>
     )
 }

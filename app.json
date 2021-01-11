@@ -17,9 +17,11 @@
             "**/*"
         ],
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "userInterfaceStyle": "dark"
         },
         "android": {
+            "userInterfaceStyle": "dark",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#FFFFFF"
