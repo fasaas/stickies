@@ -1,10 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NOTE_PREFIX } from './constants'
 
-const AppContext = React.createContext()
+const AppContext = React.createContext(undefined)
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({ children }: { children: any }) => {
     const [notes, setNotes] = React.useState([
         // { id: '1', title: 'qwert' },
         // { id: '2', title: 'asdf' },

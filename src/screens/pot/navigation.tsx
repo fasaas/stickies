@@ -1,14 +1,14 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { NoteScreen } from '../screens/NoteScreen'
-import { ExplorerScreen } from '../screens/ExplorerScreen'
+import { NoteScreen } from '../NoteScreen'
+import { ExplorerScreen } from '../ExplorerScreen'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import { Text, View } from 'react-native'
-import { AppProvider } from '../AppContext'
+import { AppProvider } from '../../AppContext'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
-export const AppNavigation = () => {
+export const PotNavigation = () => {
     return (
         <AppProvider>
             <Navigator>
