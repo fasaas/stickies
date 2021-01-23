@@ -1,6 +1,6 @@
 import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { IPots, IUser, POT_PREFIX, USER_FILE } from './constants'
+import { INote, IPot, IPots, IUser, NOTE_PREFIX, POT_PREFIX, USER_FILE } from './constants'
 import { FirstTime } from './FirstTime'
 import { UserProvider } from './contexts/user'
 import { MainScreenNavigator } from './screens/main/Navigation'
@@ -16,8 +16,20 @@ const getAllPots = async (): Promise<IPots | undefined> => {
     try {
         const allKeys = await AsyncStorage.getAllKeys()
         const allPotKeys = allKeys.filter((key) => key.startsWith(POT_PREFIX))
-        const allPots = await AsyncStorage.multiGet(allPotKeys)
-        return allPots.map(([_, potContent]) => ({ ...JSON.parse(potContent) }))
+        const allStoredPots = await AsyncStorage.multiGet(allPotKeys)
+        const allPots: IPots = allStoredPots.map(([_, potContent]) => ({ ...JSON.parse(potContent) }))
+
+        const allNoteKeys = allKeys.filter((key) => key.startsWith(NOTE_PREFIX))
+        const allStoredNotes = await AsyncStorage.multiGet(allNoteKeys)
+        const allNotes: INote[] = allStoredNotes.map(([_, noteContent]) => ({ ...JSON.parse(noteContent) }))
+
+        allNotes.forEach((note) => {
+            const { locale } = note
+            allPots.find((pot) => pot.locale === locale)?.notes.push(note)
+        })
+
+        console.log("🚀 ~ file: App.tsx ~ line 38 ~ getAllPots ~ allPots", allPots)
+        return allPots
     } catch (e) {
         console.error("Error getting all pots", e)
         return undefined
@@ -31,7 +43,6 @@ export default () => {
 
     React.useEffect(() => {
         const effect = async () => {
-            await AsyncStorage.clear()
             const item = await AsyncStorage.getItem(USER_FILE)
             if (item) {
                 setUser(JSON.parse(item))

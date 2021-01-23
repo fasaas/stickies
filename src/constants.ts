@@ -15,6 +15,13 @@ export type IPots = IPot[]
 export type IPot = {
     id: string
     locale: string
+    notes: INote[]
+}
+
+export type INote = {
+    id: string
+    locale: string
+    title: string
 }
 
 export const supportedLocales = [
