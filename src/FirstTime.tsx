@@ -2,8 +2,8 @@ import React from 'react'
 import { Button, Text, View } from 'react-native'
 import { locale } from 'expo-localization'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { IUser, USER_FILE } from '../../constants'
-import { LocalePicker } from '../../components/LocalePicker'
+import { IUser, supportedLocales, USER_FILE } from './constants'
+import { OptionsPicker } from './components/LocalePicker'
 
 enum State {
     DISPLAY = 'display',
@@ -20,20 +20,17 @@ export const FirstTime = ({ nextStep, setUser }: { nextStep: () => void; setUser
             <Text>
                 We have detected your language is {locale}
             </Text>
-            <LocalePicker onValueChange={setSelection} />
+            <OptionsPicker selection={selection} onValueChange={setSelection} options={supportedLocales} />
 
             <Button
                 title='Save and start'
                 disabled={state !== State.DISPLAY}
                 onPress={async () => {
                     setState(State.SAVING)
-                    await AsyncStorage.setItem(
-                        USER_FILE,
-                        JSON.stringify({ userLocale: selection, sysLocale: locale })
-                    )
+                    const user: IUser = { userLocale: selection, sysLocale: locale }
+                    await AsyncStorage.setItem(USER_FILE, JSON.stringify(user))
+                    setUser(user)
                     setState(State.SAVED)
-
-                    setUser({ userLocale: selection, sysLocale: locale })
                     nextStep()
                 }}
             />

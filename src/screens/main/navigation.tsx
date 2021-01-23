@@ -1,17 +1,21 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { Home } from './home'
-import { PotNavigation } from '../pot/navigation'
+import { Home } from './Home'
+import { PotNavigation } from '../note/Navigation'
+import { MAIN_NAV } from '../../constants'
+import { Settings } from './Settings'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { Note } from './Note'
 
-const { Navigator, Screen } = createStackNavigator()
+const { Navigator, Screen } = createBottomTabNavigator()
 
 export const MainScreenNavigator = () => {
     return (
         <NavigationContainer>
             <Navigator>
-                <Screen name='Home' component={Home} />
-                <Screen name='Stickies' component={PotNavigation} options={{ headerShown: false }} />
+                <Screen name={MAIN_NAV.Home} component={Home} />
+                <Screen name={MAIN_NAV.Note} component={Note} />
+                <Screen name={MAIN_NAV.Settings} component={Settings} />
             </Navigator>
         </NavigationContainer>
     )

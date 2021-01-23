@@ -1,40 +1,62 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
 import { Button, Text, View } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
 import { IPot, supportedLocales } from '../../constants'
 import { usePots } from '../../contexts/pots'
+import { OptionsPicker } from '../../components/LocalePicker'
 
 export const Home = ({ navigation }: { navigation: any }) => {
-    const { pots, setPots } = usePots()
-    const potLocales = pots?.map((pot) => pot.locale)
-
-    const freePotLocales = potLocales
-        ? supportedLocales.filter((supportedLocale) => !potLocales.includes(supportedLocale.locale))
-        : supportedLocales
-
-    const [selectedPot, setSelectedPot] = React.useState<string | undefined>(undefined)
+    const { pots } = usePots()
 
     return (
         <View>
             {
                 pots
-                    ? pots.map((pot, index) => <Button key={index} title={pot.locale} onPress={() => navigation.navigate('Stickies')} />)
+                    ? pots.map((pot, index) => <PotDisplay pot={pot} />)
                     : <Text>No pot chosen, go ahead and pick one!</Text>
 
             }
+            <PotPicker />
+        </View>
+    )
+}
+
+const PotDisplay = ({ pot }: { pot: IPot }) => {
+
+    return (
+        <View>
+            <View key={`${pot.locale} heading`}>
+                {pot.locale}
+            </View>
+            <View key='content'>
+
+            </View>
+        </View>
+    )
+}
+
+const NO_POT = ''
+const PotPicker = () => {
+    const { pots, setPots } = usePots()
+
+    const potLocales = pots?.map((pot) => pot.locale)
+    const freePotOptions = potLocales
+        ? supportedLocales.filter((supportedLocale) => !potLocales.includes(supportedLocale.value))
+        : supportedLocales
+
+    const [selectedPot, setSelectedPot] = React.useState<string>(NO_POT)
+
+    const options = [{ label: 'Pick a language', value: NO_POT }].concat(freePotOptions)
+    return (
+        <View>
             {
-                freePotLocales.length
+                freePotOptions.length
                     ? (
                         <>
-                            <Picker selectedValue={selectedPot} onValueChange={(value) => setSelectedPot(value.toString())}>
-                                <Picker.Item label='Pick a language' value={undefined} />
-                                {freePotLocales.map(({ label, locale }) =>
-                                    <Picker.Item label={label} value={locale} />
-                                )}
-                            </Picker>
+                            <OptionsPicker selection={selectedPot} onValueChange={setSelectedPot} options={options} />
+
                             <Button
-                                disabled={!selectedPot}
+                                disabled={selectedPot === NO_POT}
                                 title='add pot'
                                 onPress={async () => {
                                     const id = Date.now().toString()
@@ -43,7 +65,7 @@ export const Home = ({ navigation }: { navigation: any }) => {
                                     const _pots = pots ? Array.from(pots) : []
                                     _pots.push(pot)
                                     setPots(_pots)
-                                    setSelectedPot(undefined)
+                                    setSelectedPot(NO_POT)
                                 }}
                             />
                         </>
@@ -54,6 +76,6 @@ export const Home = ({ navigation }: { navigation: any }) => {
                         </Text>
                     )
             }
-        </View>
+        </View >
     )
 }

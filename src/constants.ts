@@ -1,8 +1,9 @@
 export const NOTE_PREFIX = '@note-'
-
 export const POT_PREFIX = '@pot-'
-
 export const USER_FILE = '@user'
+
+export const MAIN_NAV = { Home: 'Home', Note: 'Note', Settings: 'Settings' }
+export const POT_NAV = { Explorer: 'Explorer', Note: 'Note' }
 
 export type IUser = {
     userLocale: string
@@ -17,7 +18,7 @@ export type IPot = {
 }
 
 export const supportedLocales = [
-    { label: 'Español', locale: 'es-ES' },
-    { label: 'English (Irish)', locale: 'en-IE' },
-    { label: 'Pусский', locale: 'ru-RU' },
+    { label: 'Español', value: 'es-ES' },
+    { label: 'English (Irish)', value: 'en-IE' },
+    { label: 'Pусский', value: 'ru-RU' },
 ]

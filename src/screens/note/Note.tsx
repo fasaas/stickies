@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Button, TextInput } from 'react-native'
-import { useAppProvider } from '../../AppContext'
+import { useAppProvider } from './AppContext'
 
 export const Note = (props: { id: string; content: any; navigation: any }) => {
     const [title, setTitle] = React.useState(props.content?.title || '')

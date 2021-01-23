@@ -1,9 +1,9 @@
 import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IPots, IUser, POT_PREFIX, USER_FILE } from './constants'
-import { FirstTime } from './screens/main/firstTime'
+import { FirstTime } from './FirstTime'
 import { UserProvider } from './contexts/user'
-import { MainScreenNavigator } from './screens/main/navigation'
+import { MainScreenNavigator } from './screens/main/Navigation'
 import { PotsProvider } from './contexts/pots'
 
 enum State {
@@ -31,6 +31,7 @@ export default () => {
 
     React.useEffect(() => {
         const effect = async () => {
+            await AsyncStorage.clear()
             const item = await AsyncStorage.getItem(USER_FILE)
             if (item) {
                 setUser(JSON.parse(item))

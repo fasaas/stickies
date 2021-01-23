@@ -1,23 +1,21 @@
 import React from 'react'
 import { Picker } from '@react-native-picker/picker'
-import { supportedLocales } from '../constants'
 
-type LocalePickerProps = {
+type OptionsPickerProps = {
     onValueChange: (selection: string) => void
-    defaultSelection?: string
+    options: { label: string; value: string }[]
+    selection: string
 }
 
-export const LocalePicker = ({ onValueChange, defaultSelection }: LocalePickerProps) => {
+export const OptionsPicker = ({ onValueChange, selection: selection, options }: OptionsPickerProps) => {
     return (
         <Picker
-            selectedValue={defaultSelection}
-            onValueChange={(value) => {
-                onValueChange(value.toString())
-            }}
+            selectedValue={selection}
+            onValueChange={(value) => { onValueChange(value.toString()) }}
         >
             {
-                supportedLocales.map(({ label, locale }, index) =>
-                    <Picker.Item key={index} label={label} value={locale} />
+                options.map(({ label, value }, index) =>
+                    <Picker.Item key={index} label={label} value={value} />
                 )
             }
         </Picker>

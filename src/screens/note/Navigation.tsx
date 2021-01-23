@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NoteScreen } from '../NoteScreen'
 import { ExplorerScreen } from '../ExplorerScreen'
 import { AntDesign, Feather } from '@expo/vector-icons'
-import { Text, View } from 'react-native'
-import { AppProvider } from '../../AppContext'
+import { AppProvider } from './AppContext'
+import { POT_NAV } from '../../constants'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -13,7 +13,7 @@ export const PotNavigation = () => {
         <AppProvider>
             <Navigator>
                 <Screen
-                    name='Explorer'
+                    name={POT_NAV.Explorer}
                     component={ExplorerScreen}
                     options={{
                         tabBarIcon: ({ focused }) => (
@@ -22,16 +22,8 @@ export const PotNavigation = () => {
                     }}
                 />
                 <Screen
-                    name='Note'
+                    name={POT_NAV.Note}
                     component={NoteScreen}
-                    options={{
-                        tabBarIcon: () => <Feather name='plus-circle' size={24} color='black' />,
-                    }}
-                />
-
-                <Screen
-                    name='Settings'
-                    component={Settings}
                     options={{
                         tabBarIcon: () => <Feather name='plus-circle' size={24} color='black' />,
                     }}
@@ -41,10 +33,4 @@ export const PotNavigation = () => {
     )
 }
 
-const Settings = () => {
-    return (
-        <View>
-            <Text>Esto serán los settings</Text>
-        </View>
-    )
-}
+

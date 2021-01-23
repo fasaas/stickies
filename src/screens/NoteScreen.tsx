@@ -1,6 +1,6 @@
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useAppProvider } from '../AppContext'
+import { useAppProvider } from './note/AppContext'
 import { Note } from './note/Note'
 
 export const NoteScreen = ({ navigation, route }: { navigation: any; route: any }) => {

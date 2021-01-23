@@ -1,6 +1,6 @@
 import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { NOTE_PREFIX } from './constants'
+import { NOTE_PREFIX } from '../../constants'
 
 const AppContext = React.createContext(undefined)
 

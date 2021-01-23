@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useAppProvider } from '../AppContext'
+import { useAppProvider } from './note/AppContext'
 import { Octicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
