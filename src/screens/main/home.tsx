@@ -68,7 +68,7 @@ const NewPotTitleModal = (props: { pot: IPot; modalVisible: boolean; setModalVis
 
 const NO_POT = ''
 const PotPicker = () => {
-    const { pots, setPots } = usePots()
+    const { pots, dispatch } = usePots()
 
     const potLocales = pots?.map((pot) => pot.locale)
     const freePotOptions = potLocales
@@ -93,9 +93,7 @@ const PotPicker = () => {
                                     const id = Date.now().toString()
                                     const pot: IPot = { id, locale: selectedPot, notes: [] }
                                     await AsyncStorage.setItem(`@pot-${id}`, JSON.stringify(pot))
-                                    const _pots = pots ? Array.from(pots) : []
-                                    _pots.push(pot)
-                                    setPots(_pots)
+                                    dispatch({ type: 'add-pot', event: { pot } })
                                     setSelectedPot(NO_POT)
                                 }}
                             />
