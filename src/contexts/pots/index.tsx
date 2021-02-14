@@ -7,8 +7,9 @@ type State = { pots: IPots | undefined }
 const potsInit = (pots?: IPots): State => ({ pots: pots })
 
 type Action = {
-    type: 'add-pot' | 'remove-note' | 'add-note'
+    type: 'add-pot' | 'remove-note' | 'add-note' | 'update-note'
     event: {
+        potId?: string
         pot?: IPot
         noteId?: string
         note?: INote
@@ -38,6 +39,22 @@ const potsReducer = (state: State, action: Action): State => {
                 if (pot.id === action.event.pot?.id) {
                     const newNotes = Array.from(pot.notes)
                     newNotes.push(action.event.note);
+                    return { ...pot, notes: newNotes }
+                }
+
+                return pot
+            })
+            return { pots: mappedPots }
+        }
+        case 'update-note': {
+            const _pots = state.pots ? Array.from(state.pots) : []
+            const mappedPots = _pots.map((pot) => {
+                const potNeedingUpdate = pot.notes.find((note) => note.id === action.event.note.id)
+                if (potNeedingUpdate) {
+                    const newNotes = Array.from(pot.notes).map((note) => {
+                        if (note.id !== action.event.note?.id) return note
+                        return action.event.note
+                    })
                     return { ...pot, notes: newNotes }
                 }
 
