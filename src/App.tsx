@@ -28,7 +28,6 @@ const getAllPots = async (): Promise<IPots | undefined> => {
             allPots.find((pot) => pot.locale === locale)?.notes.push(note)
         })
 
-        console.log("🚀 ~ file: App.tsx ~ line 38 ~ getAllPots ~ allPots", allPots)
         return allPots
     } catch (e) {
         console.error("Error getting all pots", e)
@@ -57,7 +56,6 @@ export default () => {
         effect()
     }, [])
 
-    console.log("🚀 ~ file: App.tsx ~ line 62 ~ appState", appState)
     switch (appState) {
         case State.IDLE: {
             return <AppSplash />
@@ -66,8 +64,6 @@ export default () => {
             return <FirstTime nextStep={() => setAppState(State.SHOW_APP)} setUser={setUser} />
         }
         case State.SHOW_APP: {
-            console.log("🚀 ~ file: App.tsx ~ line 72 ~ user", user)
-            console.log("🚀 ~ file: App.tsx ~ line 74 ~ pots", pots)
             return (
                 <UserProvider user={user}>
                     <PotsProvider pots={pots}>

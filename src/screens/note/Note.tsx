@@ -9,7 +9,6 @@ export const Note = (props: { id: string; content: any; navigation: any }) => {
     const { notes, setNotes } = useAppProvider()
 
     React.useEffect(() => {
-        console.log('Inner use effect', props)
         setTitle(props.content?.title || '')
     }, [props.id, props.content])
 

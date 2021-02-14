@@ -29,6 +29,7 @@ export const Home = ({ navigation }: { navigation: NavigationProp<any> }) => {
 const PotDisplay = ({ pot }: { pot: IPot }) => {
     const [modalVisible, setModalVisible] = React.useState(false)
     const { dispatch } = usePots()
+    const { navigate } = useNavigation()
     return (
         <View>
             <View key={`${pot.locale} heading`}>
@@ -41,7 +42,7 @@ const PotDisplay = ({ pot }: { pot: IPot }) => {
                 {pot.notes.length ?
                     pot.notes.map((note, index) =>
                         <View key={index}>
-                            <Pressable style={{ borderWidth: 2 }} onPress={() => { }}>
+                            <Pressable style={{ borderWidth: 2 }} onPress={() => { navigate(MAIN_NAV.Note, { noteId: note.id, potId: pot.id }) }}>
                                 <Text>{JSON.stringify(note)}</Text>
                                 <FontAwesome name="remove" size={24} color="black" onPress={(evt) => {
                                     evt.preventDefault()

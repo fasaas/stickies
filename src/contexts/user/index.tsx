@@ -11,7 +11,6 @@ type Action = {
 const userReducer = (state: IUser, action: Action) => {
     switch (action.type) {
         case 'set-user': {
-            console.log("🚀 ~ file: index.tsx ~ line 16 ~ userReducer ~ action.user", action.user)
             return action.user
         }
     }
