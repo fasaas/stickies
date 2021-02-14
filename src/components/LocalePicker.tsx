@@ -7,7 +7,7 @@ type OptionsPickerProps = {
     selection: string
 }
 
-export const OptionsPicker = ({ onValueChange, selection: selection, options }: OptionsPickerProps) => {
+export const OptionsPicker = ({ onValueChange, selection, options }: OptionsPickerProps) => {
     return (
         <Picker
             selectedValue={selection}

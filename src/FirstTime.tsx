@@ -1,9 +1,10 @@
 import React from 'react'
-import { Button, Text, View } from 'react-native'
+import { Button, Text } from 'react-native'
 import { locale } from 'expo-localization'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IUser, supportedLocales, USER_FILE } from './constants'
 import { OptionsPicker } from './components/LocalePicker'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 enum State {
     DISPLAY = 'display',
@@ -16,7 +17,7 @@ export const FirstTime = ({ nextStep, setUser }: { nextStep: () => void; setUser
     const [selection, setSelection] = React.useState(locale)
 
     return (
-        <View>
+        <SafeAreaView>
             <Text>
                 We have detected your language is {locale}
             </Text>
@@ -34,6 +35,6 @@ export const FirstTime = ({ nextStep, setUser }: { nextStep: () => void; setUser
                     nextStep()
                 }}
             />
-        </View>
+        </SafeAreaView>
     )
 }

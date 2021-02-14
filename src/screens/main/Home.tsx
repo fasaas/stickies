@@ -59,7 +59,6 @@ const PotDisplay = ({ pot }: { pot: IPot }) => {
 
 const NewPotTitleModal = (props: { pot: IPot; modalVisible: boolean; setModalVisible: React.Dispatch<React.SetStateAction<boolean>> }) => {
     const [title, setTitle] = React.useState('')
-    const navigation = useNavigation()
     const { dispatch } = usePots()
     return (
         <View>
@@ -72,11 +71,12 @@ const NewPotTitleModal = (props: { pot: IPot; modalVisible: boolean; setModalVis
                 <TextInput value={title} onChangeText={setTitle} placeholder='Title for the note' />
                 <Button title='Create' disabled={!title} onPress={async () => {
                     const id = Date.now().toString()
-                    const newNote: INote = { id, locale: props.pot.locale, title }
+                    const newNote: INote = { id, locale: props.pot.locale, title, sections: [] }
                     await AsyncStorage.setItem(`${NOTE_PREFIX}-${id}`, JSON.stringify(newNote))
-                    // append note to pot (easier with a reducer)
-                    // navigate to note
+
                     dispatch({ type: 'add-note', event: { note: newNote, pot: props.pot } })
+                    setTitle('')
+                    props.setModalVisible(false)
                 }} />
                 <Button title='Cancel' onPress={() => { props.setModalVisible(false) }} />
             </Modal>

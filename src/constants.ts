@@ -22,6 +22,13 @@ export type INote = {
     id: string
     locale: string
     title: string
+    sections: ISection[]
+}
+
+export type ISection = {
+    id: string
+    type: string
+    props: any
 }
 
 export const supportedLocales = [
