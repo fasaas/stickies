@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
-import { Button, Text, View } from 'react-native'
+import { Button, ScrollView, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { INote, MAIN_NAV } from '../../constants'
 import { usePots } from '../../contexts/pots'
@@ -16,6 +16,7 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
     const [hasParams, setHasParams] = React.useState(!!route.params)
     const [potId, setPotId] = React.useState(route?.params?.potId || undefined)
     const [note, setNote] = React.useState<INote | undefined>(undefined)
+    const [title, setTitle] = React.useState<string | undefined>(undefined)
     const { pots } = usePots()
 
     React.useEffect(() => {
@@ -26,10 +27,13 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
 
             setPotId(potId)
             setNote(foundNote)
+            setTitle(foundNote?.title)
 
         } else {
             setPotId(undefined)
             setNote(undefined)
+            setTitle(undefined)
+
         }
         setHasParams(!!route.params)
 
@@ -48,8 +52,15 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
 
     return (
         <SafeAreaView>
-            <Text>Here you'll see the content for pot {potId} - {noteId}</Text>
+            <Text>Here you'll see the content for pot {potId} - {note?.id}</Text>
             <Text>{JSON.stringify(note, null, 4)}</Text>
+            <View>
+                <Button title='Save (does nothing for now)' onPress={() => { }} />
+            </View>
+            <ScrollView>
+                <Text>Title</Text>
+                <TextInput style={{ borderBottomWidth: 1 }} value={title} onChangeText={setTitle} />
+            </ScrollView>
         </SafeAreaView>
     )
 }
