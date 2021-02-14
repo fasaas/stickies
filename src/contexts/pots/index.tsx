@@ -1,5 +1,5 @@
 import React from 'react'
-import { IPot, IPots } from '../../constants'
+import { INote, IPot, IPots } from '../../constants'
 
 const Context = React.createContext(undefined)
 
@@ -7,9 +7,11 @@ type State = { pots: IPots | undefined }
 const potsInit = (pots?: IPots): State => ({ pots: pots })
 
 type Action = {
-    type: 'add-pot'
+    type: 'add-pot' | 'remove-note' | 'add-note'
     event: {
-        pot: IPot
+        pot?: IPot
+        noteId?: string
+        note?: INote
     }
 }
 const potsReducer = (state: State, action: Action): State => {
@@ -19,6 +21,29 @@ const potsReducer = (state: State, action: Action): State => {
             _pots.push(action.event.pot)
 
             return { pots: _pots }
+        }
+        case 'remove-note': {
+            const _pots = state.pots ? Array.from(state.pots) : []
+            const filteredPots = _pots.map((pot) => {
+                const { notes, ...rest } = pot
+                const filteredNotes = notes.filter((note) => note.id !== action.event.noteId)
+                return { ...rest, notes: filteredNotes }
+            })
+
+            return { pots: filteredPots }
+        }
+        case 'add-note': {
+            const _pots = state.pots ? Array.from(state.pots) : []
+            const mappedPots = _pots.map((pot) => {
+                if (pot.id === action.event.pot?.id) {
+                    const newNotes = Array.from(pot.notes)
+                    newNotes.push(action.event.note);
+                    return { ...pot, notes: newNotes }
+                }
+
+                return pot
+            })
+            return { pots: mappedPots }
         }
     }
 }

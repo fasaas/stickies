@@ -1,6 +1,6 @@
 import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { INote, IPot, IPots, IUser, NOTE_PREFIX, POT_PREFIX, USER_FILE } from './constants'
+import { INote, IPots, IUser, NOTE_PREFIX, POT_PREFIX, USER_FILE } from './constants'
 import { FirstTime } from './FirstTime'
 import { UserProvider } from './contexts/user'
 import { MainScreenNavigator } from './screens/main/Navigation'
@@ -57,6 +57,7 @@ export default () => {
         effect()
     }, [])
 
+    console.log("🚀 ~ file: App.tsx ~ line 62 ~ appState", appState)
     switch (appState) {
         case State.IDLE: {
             return <AppSplash />
@@ -65,6 +66,8 @@ export default () => {
             return <FirstTime nextStep={() => setAppState(State.SHOW_APP)} setUser={setUser} />
         }
         case State.SHOW_APP: {
+            console.log("🚀 ~ file: App.tsx ~ line 72 ~ user", user)
+            console.log("🚀 ~ file: App.tsx ~ line 74 ~ pots", pots)
             return (
                 <UserProvider user={user}>
                     <PotsProvider pots={pots}>

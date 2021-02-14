@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Pressable, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAppProvider } from './note/AppContext'
 import { Octicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -8,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
     const { notes, setNotes } = useAppProvider()
     return (
-        <SafeAreaView>
+        <View>
             <Text>Notes</Text>
             <Text>Idioma origen 1 (Origin language 1)</Text>
             {notes.map(({ id, title }, index) => (
@@ -40,6 +39,6 @@ export const ExplorerScreen = ({ navigation }: { navigation: any }) => {
                 title='Create new note'
                 onPress={() => navigation.navigate('Note', { exists: false })}
             />
-        </SafeAreaView>
+        </View>
     )
 }

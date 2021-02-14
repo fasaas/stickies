@@ -1,41 +1,55 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
-import { Button, Modal, Text, View } from 'react-native'
+import { Button, Modal, Pressable, ScrollView, Text, View } from 'react-native'
 import { INote, IPot, MAIN_NAV, NOTE_PREFIX, supportedLocales } from '../../constants'
 import { usePots } from '../../contexts/pots'
 import { OptionsPicker } from '../../components/LocalePicker'
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export const Home = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const { pots } = usePots()
     return (
-        <View>
-            {
-                pots
-                    ? pots.map((pot, index) => <PotDisplay pot={pot} />)
-                    : <Text>No pot chosen, go ahead and pick one!</Text>
+        <SafeAreaView>
+            <ScrollView>
+                {
+                    !!pots?.length
+                        ? pots.map((pot, index) => <PotDisplay key={index} pot={pot} />)
+                        : <Text>No pot chosen, go ahead and pick one!</Text>
 
-            }
-            <PotPicker />
-        </View>
+                }
+                <PotPicker />
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
 const PotDisplay = ({ pot }: { pot: IPot }) => {
     const [modalVisible, setModalVisible] = React.useState(false)
+    const { dispatch } = usePots()
     return (
         <View>
             <View key={`${pot.locale} heading`}>
-                {pot.locale}
+                <Text>{pot.id} - {pot.locale}</Text>
                 <AntDesign name="addfile" size={24} color="black" onPress={() => setModalVisible(true)} />
                 <NewPotTitleModal pot={pot} modalVisible={modalVisible} setModalVisible={setModalVisible} />
                 <FontAwesome name="remove" size={24} color="black" />
             </View>
             <View key='content'>
                 {pot.notes.length ?
-                    pot.notes.map((note) => <Text>{JSON.stringify(note)}</Text>)
+                    pot.notes.map((note, index) =>
+                        <View key={index}>
+                            <Pressable style={{ borderWidth: 2 }} onPress={() => { }}>
+                                <Text>{JSON.stringify(note)}</Text>
+                                <FontAwesome name="remove" size={24} color="black" onPress={(evt) => {
+                                    evt.preventDefault()
+                                    dispatch({ type: 'remove-note', event: { noteId: note.id } })
+                                }} />
+                            </Pressable>
+                        </View>
+                    )
                     : <Text>You have no notes for {pot.locale}</Text>}
             </View>
         </View>
@@ -45,22 +59,25 @@ const PotDisplay = ({ pot }: { pot: IPot }) => {
 const NewPotTitleModal = (props: { pot: IPot; modalVisible: boolean; setModalVisible: React.Dispatch<React.SetStateAction<boolean>> }) => {
     const [title, setTitle] = React.useState('')
     const navigation = useNavigation()
+    const { dispatch } = usePots()
     return (
         <View>
             <Modal
                 visible={props.modalVisible}
+                animationType='slide'
                 onRequestClose={() => props.setModalVisible(false)}
             >
                 <Text>Which title</Text>
-                <TextInput value={title} onChangeText={setTitle} placeholder='Title for the note, can be empty' />
-                <Button title='Create' onPress={async () => {
+                <TextInput value={title} onChangeText={setTitle} placeholder='Title for the note' />
+                <Button title='Create' disabled={!title} onPress={async () => {
                     const id = Date.now().toString()
                     const newNote: INote = { id, locale: props.pot.locale, title }
                     await AsyncStorage.setItem(`${NOTE_PREFIX}-${id}`, JSON.stringify(newNote))
                     // append note to pot (easier with a reducer)
                     // navigate to note
+                    dispatch({ type: 'add-note', event: { note: newNote, pot: props.pot } })
                 }} />
-                <Button title='Cancel' onPress={() => { }} />
+                <Button title='Cancel' onPress={() => { props.setModalVisible(false) }} />
             </Modal>
         </View>
     )
