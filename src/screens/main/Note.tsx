@@ -23,6 +23,7 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
     const [hasParams, setHasParams] = React.useState(!!route.params)
     const [potId, setPotId] = React.useState(route?.params?.potId || undefined)
     const [note, setNote] = React.useState<INote | undefined>(undefined)
+    const [sections, setSections] = React.useState<ISection[]>([])
     const [title, setTitle] = React.useState<string>('')
     const { pots, dispatch } = usePots()
 
@@ -35,11 +36,13 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
             setPotId(potId)
             setNote(foundNote)
             setTitle(foundNote?.title)
+            setSections(foundNote?.sections)
 
         } else {
             setPotId(undefined)
             setNote(undefined)
             setTitle('')
+            setSections([])
 
         }
         setHasParams(!!route.params)
@@ -60,9 +63,10 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
     const newSection = (type: string) => {
         switch (type) {
             case '@native/sentence': {
-                const _sections = Array.from(note.sections)
-                _sections.push({ id: Date.now().toString(), type, props: { from: '', to: '' } })
-                setNote({ ...note, sections: _sections })
+                const _sections = Array.from(sections)
+                const newSection = { id: Date.now().toString(), type, props: { from: '', to: '' } }
+                _sections.push(newSection)
+                setSections(_sections)
             }
 
             default: { }
@@ -77,7 +81,8 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                     const newNote: INote = {
                         id: note?.id,
                         locale: note?.locale,
-                        title
+                        title,
+                        sections
                     }
 
                     await AsyncStorage.setItem(`${NOTE_PREFIX}-${note?.id}`, JSON.stringify(newNote))
@@ -90,20 +95,28 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                 <TextInput style={{ borderBottomWidth: 1 }} value={title} onChangeText={setTitle} />
                 <OptionsPicker selection='' onValueChange={newSection} options={sectionOptions} />
                 {
-                    note?.sections.length
-                        ? note.sections.map((section, index) => {
+                    sections.length
+                        ? sections.map((section, index) => {
                             return (
                                 <View key={index}>
                                     <Text>From</Text>
-                                    <TextInput style={{ borderBottomWidth: 1 }} value={section.props.from} onChangeText={(text) => section.props.from = text} />
+                                    <TextInput style={{ borderBottomWidth: 1 }} value={section.props.from} onChangeText={(text) => {
+                                        const _sections = Array.from(sections)
+                                        _sections.find((s) => s.id === section.id).props.from = text
+                                        setSections(_sections)
+                                    }} />
                                     <Text>To</Text>
-                                    <TextInput value={section.props.to} onChangeText={(text) => section.props.to = text} />
+                                    <TextInput style={{ borderBottomWidth: 1 }} value={section.props.to} onChangeText={(text) => {
+                                        const _sections = Array.from(sections)
+                                        _sections.find((s) => s.id === section.id).props.to = text
+                                        setSections(_sections)
+                                    }} />
                                 </View>
                             )
                         })
                         : <Text>This note has no content, add some sections to it</Text>
                 }
-                <Text>{JSON.stringify(note?.sections, null, 3)}</Text>
+                <Text>{JSON.stringify(sections, null, 3)}</Text>
             </ScrollView>
         </SafeAreaView>
     )
