@@ -1,13 +1,12 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { Home } from './Home'
-import { PotNavigation } from '../note/Navigation'
 import { MAIN_NAV } from '../../constants'
 import { Settings } from './Settings'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { Note } from './Note'
 
-const { Navigator, Screen } = createBottomTabNavigator()
+const { Navigator, Screen } = createMaterialBottomTabNavigator()
 
 export const MainScreenNavigator = () => {
     return (
