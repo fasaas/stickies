@@ -30,25 +30,22 @@ export const Settings = () => {
                 />
             </View>
             <View>
-                <Text >Example text for size</Text>
                 <Text style={{ fontSize }}>Example text for size</Text>
-                <View >
-                    <Slider
-                        minimumValue={MIN_FONT_SIZE}
-                        maximumValue={MAX_FONT_SIZE}
-                        step={FONT_SIZE_STEP}
-                        value={fontSize}
-                        onValueChange={setFontSize}
-                        minimumTrackTintColor="#000000"
-                        maximumTrackTintColor="#FFFFFF"
-                    />
-                    <OptionsPicker
-                        selection={fontSize.toString()}
-                        onValueChange={(value) => { setFontSize(parseInt(value.toString())) }}
-                        options={fontSizes.map((size) => ({ label: size.toString(), value: size.toString() })
-                        )}
-                    />
-                </View>
+                <Slider
+                    minimumValue={MIN_FONT_SIZE}
+                    maximumValue={MAX_FONT_SIZE}
+                    step={FONT_SIZE_STEP}
+                    value={fontSize}
+                    onValueChange={setFontSize}
+                    minimumTrackTintColor='#000000'
+                    maximumTrackTintColor='#FFFFFF'
+                />
+                <OptionsPicker
+                    selection={fontSize.toString()}
+                    onValueChange={(value) => { setFontSize(parseInt(value.toString())) }}
+                    options={fontSizes.map((size) => ({ label: size.toString(), value: size.toString() })
+                    )}
+                />
             </View>
 
         </SafeAreaView>
