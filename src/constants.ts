@@ -8,6 +8,7 @@ export const POT_NAV = { Explorer: 'Explorer', Note: 'Note' }
 export type IUser = {
     userLocale: string
     sysLocale: string
+    textSize: number
 }
 
 export type IPots = IPot[]

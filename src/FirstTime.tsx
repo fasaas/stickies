@@ -28,7 +28,7 @@ export const FirstTime = ({ nextStep, setUser }: { nextStep: () => void; setUser
                 disabled={state !== State.DISPLAY}
                 onPress={async () => {
                     setState(State.SAVING)
-                    const user: IUser = { userLocale: selection, sysLocale: locale }
+                    const user: IUser = { userLocale: selection, sysLocale: locale, textSize: 14 }
                     await AsyncStorage.setItem(USER_FILE, JSON.stringify(user))
                     setUser(user)
                     setState(State.SAVED)
