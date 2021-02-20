@@ -33,3 +33,10 @@ export const useUserContext = (): { state: IUser; dispatch: React.Dispatch<Actio
 
     return ctx
 }
+
+export const useUserTextSize = (): number => {
+    const ctx = React.useContext(UserContext)
+    if (ctx === undefined) throw new Error('useUserContext must be used within <UserProvider>')
+
+    return ctx.state.textSize
+}

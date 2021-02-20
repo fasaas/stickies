@@ -1,11 +1,12 @@
 import React from 'react'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
-import { Button, ScrollView, Text, TextInput, View } from 'react-native'
+import { Button, ScrollView, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { INote, ISection, MAIN_NAV, NOTE_PREFIX } from '../../constants'
 import { usePots } from '../../contexts/pots'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { OptionsPicker } from '../../components/LocalePicker'
+import { OptionsPicker } from '../../components/OptionsPicker'
+import { Text } from '../../components/Text'
 
 type RouteProps = {
     'Note': {

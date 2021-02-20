@@ -3,7 +3,7 @@ import { Button, Text } from 'react-native'
 import { locale } from 'expo-localization'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IUser, supportedLocales, USER_FILE } from './constants'
-import { OptionsPicker } from './components/LocalePicker'
+import { OptionsPicker } from './components/OptionsPicker'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 enum State {

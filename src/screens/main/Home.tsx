@@ -1,13 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
-import { Button, Modal, Pressable, ScrollView, Text, View } from 'react-native'
+import { Button, Modal, Pressable, ScrollView, View } from 'react-native'
 import { INote, IPot, MAIN_NAV, NOTE_PREFIX, supportedLocales } from '../../constants'
 import { usePots } from '../../contexts/pots'
-import { OptionsPicker } from '../../components/LocalePicker'
+import { OptionsPicker } from '../../components/OptionsPicker'
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Text } from '../../components/Text'
 
 export const Home = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const { pots } = usePots()
@@ -41,15 +42,18 @@ const PotDisplay = ({ pot }: { pot: IPot }) => {
             <View key='content'>
                 {pot.notes.length ?
                     pot.notes.map((note, index) =>
-                        <View key={index}>
-                            <Pressable style={{ borderWidth: 2 }} onPress={() => { navigate(MAIN_NAV.Note, { noteId: note.id, potId: pot.id }) }}>
-                                <Text>{JSON.stringify(note)}</Text>
+                        <Pressable key={index} style={{ borderWidth: 3, borderColor: 'orange' }} onPress={() => { navigate(MAIN_NAV.Note, { noteId: note.id, potId: pot.id }) }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+                                <Pressable onPress={() => { navigate(MAIN_NAV.Note, { noteId: note.id, potId: pot.id }) }}>
+                                    <Text>{note.title}</Text>
+                                </Pressable>
                                 <FontAwesome name="remove" size={24} color="black" onPress={(evt) => {
-                                    evt.preventDefault()
-                                    dispatch({ type: 'remove-note', event: { noteId: note.id } })
+                                    console.log("Remove requested")
+                                    // dispatch({ type: 'remove-note', event: { noteId: note.id } })
                                 }} />
-                            </Pressable>
-                        </View>
+                            </View>
+                        </Pressable>
                     )
                     : <Text>You have no notes for {pot.locale}</Text>}
             </View>
