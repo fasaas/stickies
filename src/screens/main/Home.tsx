@@ -9,12 +9,17 @@ import { TextInput } from 'react-native-gesture-handler'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text } from '../../components/Text'
+import { RemoveButton } from '../../components/RemoveButton'
 
 export const Home = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const { pots } = usePots()
     return (
         <SafeAreaView>
             <ScrollView>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    <Text styles={{ color: 'red' }} >Click to REMOVE EVERYTHING -></Text>
+                    <RemoveButton onTerminate={async () => await AsyncStorage.clear()} />
+                </View>
                 {
                     !!pots?.length
                         ? pots.map((pot, index) => <PotDisplay key={index} pot={pot} />)
@@ -48,10 +53,12 @@ const PotDisplay = ({ pot }: { pot: IPot }) => {
                                 <Pressable onPress={() => { navigate(MAIN_NAV.Note, { noteId: note.id, potId: pot.id }) }}>
                                     <Text>{note.title}</Text>
                                 </Pressable>
-                                <FontAwesome name="remove" size={24} color="black" onPress={(evt) => {
-                                    console.log("Remove requested")
-                                    // dispatch({ type: 'remove-note', event: { noteId: note.id } })
-                                }} />
+                                <View style={{ borderWidth: 2, borderColor: 'red' }}>
+                                    <RemoveButton onTerminate={async () => {
+                                        dispatch({ type: 'remove-note', event: { noteId: note.id } })
+                                        await AsyncStorage.removeItem(`${NOTE_PREFIX}-${note.id}`)
+                                    }} />
+                                </View>
                             </View>
                         </Pressable>
                     )

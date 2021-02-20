@@ -20,6 +20,7 @@ const getAllPots = async (): Promise<IPots | undefined> => {
         const allPots: IPots = allStoredPots.map(([_, potContent]) => ({ ...JSON.parse(potContent) }))
 
         const allNoteKeys = allKeys.filter((key) => key.startsWith(NOTE_PREFIX))
+        console.log("🚀 ~ file: App.tsx ~ line 23 ~ getAllPots ~ allNoteKeys", allNoteKeys)
         const allStoredNotes = await AsyncStorage.multiGet(allNoteKeys)
         const allNotes: INote[] = allStoredNotes.map(([_, noteContent]) => ({ ...JSON.parse(noteContent) }))
 
