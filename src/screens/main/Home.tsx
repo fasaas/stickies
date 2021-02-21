@@ -4,20 +4,20 @@ import { Button, Modal, Pressable, ScrollView, View } from 'react-native'
 import { INote, IPot, MAIN_NAV, NOTE_PREFIX, POT_PREFIX, supportedLocales } from '../../constants'
 import { usePots } from '../../contexts/pots'
 import { OptionsPicker } from '../../components/OptionsPicker'
-import { Entypo } from '@expo/vector-icons';
-import { TextInput } from 'react-native-gesture-handler'
+import { Entypo } from '@expo/vector-icons'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text } from '../../components/Text'
 import { RemoveButton } from '../../components/RemoveButton'
+import { TextInput } from '../../components/TextInput'
 
 export const Home = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const { pots } = usePots()
     return (
         <SafeAreaView>
             <ScrollView style={{ marginLeft: 2, marginRight: 2 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                    <Text styles={{ color: 'red' }} >Click to REMOVE EVERYTHING (you'll need to refresh the app)</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                    <Text styles={{ color: 'red' }} >Click to REMOVE ALL, then refresh app</Text>
                     <RemoveButton onTerminate={async () => await AsyncStorage.clear()} />
                 </View>
                 {
@@ -40,18 +40,20 @@ const PotDisplay = ({ pot }: { pot: IPot }) => {
         <View>
             <View key={`${pot.locale} heading`}>
                 <Text>{pot.id} - {pot.locale}</Text>
-                <Entypo name="add-to-list" size={24} color="black" onPress={() => setModalVisible(true)} />
                 <NewPotTitleModal pot={pot} modalVisible={modalVisible} setModalVisible={setModalVisible} />
-                <RemoveButton onTerminate={async () => {
-                    const { notes } = pot
-                    for (const note of notes) {
-                        await AsyncStorage.removeItem(`${NOTE_PREFIX}-${note.id}`)
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Entypo name="add-to-list" size={24} color="black" onPress={() => setModalVisible(true)} />
+                    <RemoveButton onTerminate={async () => {
+                        const { notes } = pot
+                        for (const note of notes) {
+                            await AsyncStorage.removeItem(`${NOTE_PREFIX}-${note.id}`)
 
-                    }
-                    await AsyncStorage.removeItem(`${POT_PREFIX}-${pot.id}`)
+                        }
+                        await AsyncStorage.removeItem(`${POT_PREFIX}-${pot.id}`)
 
-                    dispatch({ type: 'remove-pot', event: { potId: pot.id } })
-                }} />
+                        dispatch({ type: 'remove-pot', event: { potId: pot.id } })
+                    }} />
+                </View>
             </View>
             <View key='content'>
                 {pot.notes.length ?
@@ -123,7 +125,6 @@ const PotPicker = () => {
                     ? (
                         <>
                             <OptionsPicker selection={selectedPot} onValueChange={setSelectedPot} options={options} />
-
                             <Button
                                 disabled={selectedPot === NO_POT}
                                 title='add pot'

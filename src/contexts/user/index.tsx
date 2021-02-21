@@ -1,5 +1,4 @@
 import React from 'react'
-import { State } from 'react-native-paper/lib/typescript/components/TextInput/types'
 import { IUser } from '../../constants'
 
 const UserContext = React.createContext(undefined)

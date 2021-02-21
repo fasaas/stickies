@@ -1,12 +1,13 @@
 import React from 'react'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
-import { Button, ScrollView, TextInput, View } from 'react-native'
+import { Button, ScrollView, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { INote, ISection, MAIN_NAV, NOTE_PREFIX } from '../../constants'
 import { usePots } from '../../contexts/pots'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { OptionsPicker } from '../../components/OptionsPicker'
 import { Text } from '../../components/Text'
+import { TextInput } from '../../components/TextInput'
 
 type RouteProps = {
     'Note': {
@@ -22,7 +23,6 @@ const sectionOptions: { label: string; value: string }[] = [
 
 export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<RouteProps, 'Note'> }) => {
     const [hasParams, setHasParams] = React.useState(!!route.params)
-    const [potId, setPotId] = React.useState(route?.params?.potId || undefined)
     const [note, setNote] = React.useState<INote | undefined>(undefined)
     const [sections, setSections] = React.useState<ISection[]>([])
     const [title, setTitle] = React.useState<string>('')
@@ -34,13 +34,11 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
             const { potId, noteId } = route.params
             const foundNote = pots?.find((pot) => pot.id === potId)?.notes.find((note) => note.id === noteId)
 
-            setPotId(potId)
             setNote(foundNote)
             setTitle(foundNote?.title)
             setSections(foundNote?.sections)
 
         } else {
-            setPotId(undefined)
             setNote(undefined)
             setTitle('')
             setSections([])
@@ -76,12 +74,12 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
 
     return (
         <SafeAreaView>
-            <Text>Here you'll see the content for pot {potId} - {note?.id}</Text>
+            <Text>Note {note?.id} content</Text>
             <View>
                 <Button title='Save' onPress={async () => {
                     const newNote: INote = {
-                        id: note?.id,
-                        locale: note?.locale,
+                        id: note.id,
+                        locale: note.locale,
                         title,
                         sections
                     }
