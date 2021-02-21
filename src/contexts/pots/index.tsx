@@ -7,7 +7,7 @@ type State = { pots: IPots | undefined }
 const potsInit = (pots?: IPots): State => ({ pots: pots })
 
 type Action = {
-    type: 'add-pot' | 'remove-note' | 'add-note' | 'update-note'
+    type: 'add-pot' | 'remove-pot' | 'remove-note' | 'add-note' | 'update-note'
     event: {
         potId?: string
         pot?: IPot
@@ -20,6 +20,11 @@ const potsReducer = (state: State, action: Action): State => {
         case 'add-pot': {
             const _pots = state.pots ? Array.from(state.pots) : []
             _pots.push(action.event.pot)
+
+            return { pots: _pots }
+        }
+        case 'remove-pot': {
+            const _pots = state.pots ? Array.from(state.pots).filter((pot) => pot.id !== action.event.potId) : []
 
             return { pots: _pots }
         }

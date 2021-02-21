@@ -1,5 +1,5 @@
-export const NOTE_PREFIX = '@note-'
-export const POT_PREFIX = '@pot-'
+export const NOTE_PREFIX = '@note'
+export const POT_PREFIX = '@pot'
 export const USER_FILE = '@user'
 
 export const MAIN_NAV = { Home: 'Home', Note: 'Note', Settings: 'Settings' }
