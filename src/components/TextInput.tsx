@@ -4,7 +4,6 @@ import { useUserTextSize } from '../contexts/user'
 
 export const TextInput = (props) => {
     const textSize = useUserTextSize()
-    const { styles, ...rest } = props
-    const mergedStyles = { ...styles || {}, fontSize: textSize }
-    return <NativeTextInput  {...rest} style={mergedStyles} />
+    const mergedStyles = { fontSize: textSize }
+    return <NativeTextInput  {...props} style={mergedStyles} />
 }

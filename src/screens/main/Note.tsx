@@ -19,7 +19,8 @@ type RouteProps = {
 
 const sectionOptions: { label: string; value: string }[] = [
     { label: 'Which section', value: '' },
-    { label: 'Sentence', value: '@native/sentence' }
+    { label: 'Sentence', value: '@native/sentence' },
+    { label: 'Verb', value: '@native/verb' }
 ]
 
 export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<RouteProps, 'Note'> }) => {
@@ -65,6 +66,20 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
             case '@native/sentence': {
                 const _sections = Array.from(sections)
                 const newSection = { id: Date.now().toString(), type, props: { from: '', to: '' } }
+                _sections.push(newSection)
+                setSections(_sections)
+            }
+
+            case '@native/verb': {
+                const _sections = Array.from(sections)
+                const newSection = {
+                    id: Date.now().toString(), type, props: {
+                        infinitive: '',
+                        present: { 'я': '', 'ты': '', 'он/оно': '', 'она': '', 'мы': '', 'вы': '', 'они': '' },
+                        past: { 'я': '', 'ты': '', 'он/оно': '', 'она': '', 'мы': '', 'вы': '', 'они': '' },
+                        future: { 'я': '', 'ты': '', 'он/оно': '', 'она': '', 'мы': '', 'вы': '', 'они': '' }
+                    }
+                }
                 _sections.push(newSection)
                 setSections(_sections)
             }
