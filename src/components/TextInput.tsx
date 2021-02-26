@@ -6,5 +6,5 @@ export const TextInput = (props) => {
     const textSize = useUserTextSize()
     const { styles, ...rest } = props
     const mergedStyles = { ...styles || {}, fontSize: textSize }
-    return <NativeTextInput {...rest} style={mergedStyles} />
+    return <NativeTextInput  {...rest} style={mergedStyles} />
 }

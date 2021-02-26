@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { OptionsPicker } from '../../components/OptionsPicker'
 import { Text } from '../../components/Text'
 import { TextInput } from '../../components/TextInput'
+import { Sections } from './Sections'
 
 type RouteProps = {
     'Note': {
@@ -93,29 +94,7 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                 <Text>Title</Text>
                 <TextInput style={{ borderBottomWidth: 1 }} value={title} onChangeText={setTitle} />
                 <OptionsPicker selection='' onValueChange={newSection} options={sectionOptions} />
-                {
-                    sections.length
-                        ? sections.map((section, index) => {
-                            return (
-                                <View key={index}>
-                                    <Text>From</Text>
-                                    <TextInput style={{ borderBottomWidth: 1 }} value={section.props.from} onChangeText={(text) => {
-                                        const _sections = Array.from(sections)
-                                        _sections.find((s) => s.id === section.id).props.from = text
-                                        setSections(_sections)
-                                    }} />
-                                    <Text>To</Text>
-                                    <TextInput style={{ borderBottomWidth: 1 }} value={section.props.to} onChangeText={(text) => {
-                                        const _sections = Array.from(sections)
-                                        _sections.find((s) => s.id === section.id).props.to = text
-                                        setSections(_sections)
-                                    }} />
-                                </View>
-                            )
-                        })
-                        : <Text>This note has no content, add some sections to it</Text>
-                }
-                <Text>{JSON.stringify(sections, null, 3)}</Text>
+                <Sections sections={sections} setSections={setSections} />
             </ScrollView>
         </SafeAreaView>
     )
