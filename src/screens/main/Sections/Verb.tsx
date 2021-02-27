@@ -1,8 +1,8 @@
 import React from 'react'
 import { ISection } from '../../../constants'
 import { Text } from '../../../components/Text'
-// import { TextInput } from '../../../components/TextInput'
-import { Pressable, TextInput, View } from 'react-native'
+import { TextInput } from '../../../components/TextInput'
+import { Pressable, View } from 'react-native'
 
 const pronouns = ['я', 'ты', 'он/оно', 'она', 'мы', 'вы', 'они']
 
@@ -14,34 +14,34 @@ export const Verb = ({ section, setSections, sections }: { section: ISection, se
     return (
         <View>
             <Text>Infinitivo</Text>
-            <TextInput value={section.props.infinitive} onChangeText={(text) => {
+            <TextInput value={section.props.infinitive} onChangeText={(text: string) => {
                 const _sections = Array.from(sections)
                 _sections.find((s) => s.id === section.id).props.infinitive = text
                 setSections(_sections)
             }} />
             <Pressable key='present' onPress={() => togglePresent()}>
-                <Text>Present</Text>
+                <Text>{isPresentVisible ? 'Present' : 'Present collapsed'}</Text>
             </Pressable>
             {
                 isPresentVisible
                     ? <Pronouns tense='present' section={section} sections={sections} setSections={setSections} />
-                    : <Text>Present collapsed</Text>
+                    : null
             }
             <Pressable key='past' onPress={() => togglePast()}>
-                <Text>Past</Text>
+                <Text>{isPastVisible ? 'Past' : 'Past collapsed'}</Text>
             </Pressable>
             {
                 isPastVisible
                     ? <Pronouns tense='past' section={section} sections={sections} setSections={setSections} />
-                    : <Text>Past collapsed</Text>
+                    : null
             }
             <Pressable key='future' onPress={() => toggleFuture()}>
-                <Text>Future</Text>
+                <Text>{isFutureVisible ? 'Future' : 'Future collapsed'}</Text>
             </Pressable>
             {
                 isFutureVisible
                     ? <Pronouns tense='future' section={section} sections={sections} setSections={setSections} />
-                    : <Text>Future collapsed</Text>
+                    : null
             }
         </View>
     )
@@ -53,9 +53,9 @@ const Pronouns = ({ tense, section, setSections, sections }: { tense: string, se
             {
                 pronouns.map((pronoun: string, index) => {
                     return (
-                        <View key={`present-${pronoun}-${index}`}>
-                            <Text>{pronoun}</Text>
-                            <TextInput value={section.props[tense][pronoun]} onChangeText={(text) => {
+                        <View key={`present-${pronoun}-${index}`} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text>{pronoun} : </Text>
+                            <TextInput value={section.props[tense][pronoun]} onChangeText={(text: string) => {
                                 const _sections = Array.from(sections)
                                 _sections.find((s) => s.id === section.id).props.present[pronoun] = text
                                 setSections(_sections)

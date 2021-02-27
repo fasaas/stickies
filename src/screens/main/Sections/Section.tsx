@@ -1,19 +1,23 @@
 import { ISection } from "../../../constants";
 import React from 'react'
-import { Sentence } from "./Sentence";
+import { Translation } from "./Translation";
 import { View } from "react-native";
 import { Verb } from "./Verb";
+import { Text } from "./Text";
 
 export const Section = ({ section, setSections, sections }: { section: ISection, setSections: React.Dispatch<React.SetStateAction<ISection[]>>, sections: ISection[] }) => {
 
     switch (section.type) {
-        case '@native/sentence': {
-            return <Sentence section={section} setSections={setSections} sections={sections} />
+        case '@native/translation': {
+            return <Translation section={section} setSections={setSections} sections={sections} />
         }
 
         case '@native/verb': {
             return <Verb section={section} setSections={setSections} sections={sections} />
+        }
 
+        case '@native/text': {
+            return <Text section={section} setSections={setSections} sections={sections} />
         }
     }
 

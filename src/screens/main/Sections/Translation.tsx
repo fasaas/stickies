@@ -4,7 +4,7 @@ import { Text } from '../../../components/Text'
 import { TextInput } from '../../../components/TextInput'
 import { View } from 'react-native'
 
-export const Sentence = ({ section, setSections, sections }: { section: ISection, setSections: React.Dispatch<React.SetStateAction<ISection[]>>, sections: ISection[] }) => {
+export const Translation = ({ section, setSections, sections }: { section: ISection, setSections: React.Dispatch<React.SetStateAction<ISection[]>>, sections: ISection[] }) => {
 
     return (
         <View>

@@ -19,8 +19,9 @@ type RouteProps = {
 
 const sectionOptions: { label: string; value: string }[] = [
     { label: 'Which section', value: '' },
-    { label: 'Sentence', value: '@native/sentence' },
-    { label: 'Verb', value: '@native/verb' }
+    { label: 'Sentence', value: '@native/translation' },
+    { label: 'Verb', value: '@native/verb' },
+    { label: 'Text', value: '@native/text' }
 ]
 
 export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<RouteProps, 'Note'> }) => {
@@ -63,11 +64,12 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
 
     const newSection = (type: string) => {
         switch (type) {
-            case '@native/sentence': {
+            case '@native/translation': {
                 const _sections = Array.from(sections)
                 const newSection = { id: Date.now().toString(), type, props: { from: '', to: '' } }
                 _sections.push(newSection)
                 setSections(_sections)
+                break
             }
 
             case '@native/verb': {
@@ -82,8 +84,16 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                 }
                 _sections.push(newSection)
                 setSections(_sections)
+                break
             }
 
+            case '@native/text': {
+                const _sections = Array.from(sections)
+                const newSection = { id: Date.now().toString(), type, props: { text: '' } }
+                _sections.push(newSection)
+                setSections(_sections)
+                break
+            }
             default: { }
         }
     }
