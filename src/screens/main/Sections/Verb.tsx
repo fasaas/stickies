@@ -25,9 +25,9 @@ export const Verb = ({ section, setSections, sections }: { section: ISection, se
             {
                 isVerbViewable
                     ? <View>
-                        <Tense tense='present' section={section} setSections={setSections} sections={sections} />
-                        <Tense tense='past' section={section} setSections={setSections} sections={sections} />
-                        <Tense tense='future' section={section} setSections={setSections} sections={sections} />
+                        <Tense displayTense='Настоящее' tense='present' section={section} setSections={setSections} sections={sections} />
+                        <Tense displayTense='Прошлое' tense='past' section={section} setSections={setSections} sections={sections} />
+                        <Tense displayTense='Будующее' tense='future' section={section} setSections={setSections} sections={sections} />
                     </View>
                     : null
             }
@@ -35,13 +35,13 @@ export const Verb = ({ section, setSections, sections }: { section: ISection, se
     )
 }
 
-const Tense = ({ tense, section, setSections, sections }: { tense: string, section: ISection, setSections: React.Dispatch<React.SetStateAction<ISection[]>>, sections: ISection[] }) => {
+const Tense = ({ displayTense, tense, section, setSections, sections }: { displayTense: string, tense: string, section: ISection, setSections: React.Dispatch<React.SetStateAction<ISection[]>>, sections: ISection[] }) => {
     const [isTenseVisible, toggleVisibility] = React.useReducer((visible) => !visible, false)
 
     return (
         <View>
             <View key={tense} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text>{isTenseVisible ? tense : `${tense} collapsed`}</Text>
+                <Text>{displayTense}</Text>
 
                 <Pressable style={{ borderWidth: 1 }} onPress={() => toggleVisibility()}>
                     <Entypo name={isTenseVisible ? 'chevron-down' : 'chevron-right'} size={24} color="black" />

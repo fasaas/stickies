@@ -19,9 +19,10 @@ type RouteProps = {
 
 const sectionOptions: { label: string; value: string }[] = [
     { label: 'Which section', value: '' },
+    { label: 'Adjective', value: '@native/adjective' },
     { label: 'Sentence', value: '@native/translation' },
-    { label: 'Verb', value: '@native/verb' },
-    { label: 'Text', value: '@native/text' }
+    { label: 'Text', value: '@native/text' },
+    { label: 'Verb', value: '@native/verb' }
 ]
 
 export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<RouteProps, 'Note'> }) => {
@@ -77,6 +78,8 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                 const newSection = {
                     id: Date.now().toString(), type, props: {
                         infinitive: '',
+                        gerund: '',
+                        participle: '',
                         present: { 'я': '', 'ты': '', 'он/оно': '', 'она': '', 'мы': '', 'вы': '', 'они': '' },
                         past: { 'я': '', 'ты': '', 'он/оно': '', 'она': '', 'мы': '', 'вы': '', 'они': '' },
                         future: { 'я': '', 'ты': '', 'он/оно': '', 'она': '', 'мы': '', 'вы': '', 'они': '' }
@@ -94,13 +97,20 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                 setSections(_sections)
                 break
             }
+
+            case '@native/adjective': {
+                const _sections = Array.from(sections)
+                const newSection = { id: Date.now().toString(), type, props: { adjective: '', male: '', female: '', neutral: '', plural: '' } }
+                _sections.push(newSection)
+                setSections(_sections)
+                break
+            }
             default: { }
         }
     }
 
     return (
         <SafeAreaView>
-            <Text>Note {note?.id} content</Text>
             <View>
                 <Button title='Save' onPress={async () => {
                     const newNote: INote = {
@@ -115,12 +125,12 @@ export const Note = ({ navigation, route }: { navigation: NavigationProp<any>, r
                     console.log(`Note ${note?.id} updated`)
                 }} />
             </View>
+            <TextInput placeholder='Заглавие' style={{ borderBottomWidth: 1 }} value={title} onChangeText={setTitle} />
+            <OptionsPicker selection='' onValueChange={newSection} options={sectionOptions} />
+            <View style={{ borderBottomWidth: 1 }} />
             <ScrollView>
-                <Text>Title</Text>
-                <TextInput style={{ borderBottomWidth: 1 }} value={title} onChangeText={setTitle} />
-                <OptionsPicker selection='' onValueChange={newSection} options={sectionOptions} />
                 <Sections sections={sections} setSections={setSections} />
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
